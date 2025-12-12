@@ -109,7 +109,7 @@ const DhcpIpV4 = ({ namePrefix, isDisabled }: Props) => {
   );
   return (
     <Box mt={4}>
-      <Heading size="md" display="flex">
+      <Heading size="md" display="flex" flexWrap={{base: 'wrap', md: 'nowrap'}} gap={{base: 2, md: 0}}>
         <Text pt={1}>DHCPv4</Text>
         <Switch
           pt={1}

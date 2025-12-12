@@ -17,18 +17,18 @@ const Captive = ({ editing, namePrefix }: Props) => {
         'auth-mode': e.target.value,
         'auth-server': '192.168.1.10',
         'auth-secret': 'secret',
-        'aut-port': 1812,
+        // 'aut-port': 1812,
       });
     } else if (e.target.value === 'uam') {
       onChange({
         'walled-garden-fqdn': [],
-        'idle-timeout': 600,
+        // 'idle-timeout': 600,
         'auth-mode': e.target.value,
         'auth-server': '192.168.1.10',
         'auth-secret': 'secret',
-        'aut-port': 1812,
+        'mac-auth': false,
         'uam-port': 3990,
-        'uam-secret': 'secret',
+        // 'uam-secret': 'secret',
         'uam-server': 'https://YOUR-LOGIN-ADDRESS.YOURS',
         nasid: 'TestLab',
       });

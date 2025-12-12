@@ -404,7 +404,7 @@ export const INTERFACE_CAPTIVE_SCHEMA = (t, useDefault = false) => {
         .default(undefined),
       'walled-garden-ipaddr': array().of(string()).default(undefined),
       'web-root': string().default(undefined),
-      'idle-timeout': number().required(t('form.required')).positive().lessThan(65535).integer().default(600),
+      'idle-timeout': number().lessThan(65535).integer().default(undefined),
       'session-timeout': number().positive().lessThan(65535).integer().default(undefined),
       // Only if auto-mode is "credentials"
       credentials: array()
@@ -479,7 +479,7 @@ export const INTERFACE_CAPTIVE_SCHEMA = (t, useDefault = false) => {
       'uam-secret': string()
         .when('auth-mode', {
           is: (authMode) => authMode === 'uam',
-          then: (schema) => schema.required(t('form.required')).default(''),
+          then: (schema) => schema.default(''),
         })
         .default(undefined),
       'uam-port': number()
@@ -500,6 +500,13 @@ export const INTERFACE_CAPTIVE_SCHEMA = (t, useDefault = false) => {
           then: (schema) => schema.required(t('form.required')).default('aabbccddeeff'),
         })
         .default(undefined),
+      'final-redirect-url': string()
+        .when('auth-mode', {
+          is: (authMode) => authMode === 'uam',
+          then: (schema) => schema.default(''),
+        })
+        .default(undefined),
+      'mac-auth': bool().default(undefined),  
       nasid: string()
         .when('auth-mode', {
           is: (authMode) => authMode === 'uam',

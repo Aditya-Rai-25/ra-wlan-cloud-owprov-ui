@@ -44,7 +44,7 @@ const OperatorDetailsCard = ({ id }) => {
         />
         <RefreshButton onClick={refetch} isFetching={isFetching} isDisabled={editing} ml={2} />
       </CardHeader>
-      <CardBody>
+      <CardBody px={{base: 0, md: '12px'}}>
         {!operator && isFetching ? (
           <Center w="100%">
             <Spinner size="xl" />

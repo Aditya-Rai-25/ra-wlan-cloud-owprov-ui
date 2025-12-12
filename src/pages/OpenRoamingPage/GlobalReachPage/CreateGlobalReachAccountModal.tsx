@@ -109,9 +109,11 @@ const CreateGlobalReachAccountModal = () => {
               <Heading size="md" textDecoration="underline">
                 {t('roaming.account_one')} {t('common.details')}
               </Heading>
-              <Flex my={2}>
-                <StringField name="name" label={t('common.name')} isRequired isDisabled={isFieldDisabled} w="300px" />
-                <Box ml={2}>
+              <Flex my={2} wrap="wrap">
+                <Box w={{ base: '100%', md: 'auto' }} mb={{ base: 2, md: 0 }}>
+                  <StringField name="name" label={t('common.name')} isRequired isDisabled={isFieldDisabled} w="300px" />
+                </Box>
+                <Box ml={{ base: 0, md: 2 }}>
                   <StringField
                     name="commonName"
                     label={`${t('roaming.common_name')}`}
@@ -121,28 +123,32 @@ const CreateGlobalReachAccountModal = () => {
                     w="300px"
                   />
                 </Box>
-              </Flex>{' '}
-              <StringField name="Description" isArea h="80px" isDisabled={isFieldDisabled} />
+              </Flex>
+              <Box w={{ base: '93%', md: '100%' }}>
+                <StringField name="Description" isArea h="80px" isDisabled={isFieldDisabled} w="100%" />
+              </Box>
               <Heading size="md" textDecoration="underline" mt={2}>
                 {t('roaming.global_reach')}
               </Heading>
-              <Flex my={2}>
-                <StringField
-                  name="GlobalReachAcctId"
-                  label={t('roaming.global_reach_account_id')}
-                  isRequired
-                  isDisabled={isFieldDisabled}
-                  w="266px"
-                />
-                <Box ml={2}>
+              <Flex my={2} wrap={'wrap'}>
+                <Box w={{ base: '100%', md: 'auto' }} mb={{ base: 2, md: 0 }}>
+                  <StringField
+                    name="GlobalReachAcctId"
+                    label={t('roaming.global_reach_account_id')}
+                    isRequired
+                    isDisabled={isFieldDisabled}
+                    w="266px"
+                  />
+                </Box>
+                <Box ml={{ base: 0, md: 2 }}>
                   <PrivateKeyField isDisabled={isFieldDisabled} />
                 </Box>
               </Flex>
               <Heading size="md" textDecoration="underline">
                 {t('roaming.location_details_title')}
               </Heading>{' '}
-              <Flex my={2}>
-                <Box>
+              <Flex my={2} wrap={'wrap'}>
+                <Box w={{ base: '100%', md: 'auto' }} mb={{ base: 2, md: 0 }}>
                   <SelectField
                     name="country"
                     label={t('roaming.country')}
@@ -151,19 +157,21 @@ const CreateGlobalReachAccountModal = () => {
                     w="max-content"
                   />
                 </Box>
-                <Box ml={2}>
+                <Box ml={{ base: 0, md: 2 }}>
                   <StatePicker isDisabled={isFieldDisabled} />
                 </Box>
               </Flex>
-              <Flex my={2}>
-                <StringField
-                  name="city"
-                  label={`${t('roaming.city')}`}
-                  isRequired
-                  isDisabled={isFieldDisabled}
-                  w="266px"
-                />
-                <Box ml={2}>
+              <Flex my={2} wrap={'wrap'}>
+                <Box w={{ base: '100%', md: 'auto' }} mb={{ base: 2, md: 0 }}>
+                  <StringField
+                    name="city"
+                    label={`${t('roaming.city')}`}
+                    isRequired
+                    isDisabled={isFieldDisabled}
+                    w="266px"
+                  />
+                </Box>
+                <Box ml={{ base: 0, md: 2 }}>
                   <StringField
                     name="organization"
                     label={`${t('roaming.organization')}`}

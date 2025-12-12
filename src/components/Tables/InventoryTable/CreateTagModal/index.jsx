@@ -61,7 +61,7 @@ const CreateTagModal = ({ refresh, entityId, subId, deviceClass }) => {
 
   return (
     <>
-      <CreateButton onClick={openModal} ml={2} />
+      <CreateButton onClick={openModal} ml={{base: 0, md: 2}} />
       <Modal onClose={closeModal} isOpen={isOpen} size="xl">
         <ModalOverlay />
         <ModalContent maxWidth={{ sm: '90%', md: '900px', lg: '1000px', xl: '80%' }}>

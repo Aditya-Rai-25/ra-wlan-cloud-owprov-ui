@@ -58,7 +58,7 @@ const Radios = ({ editing, arrayHelpers, radioBands, radioBandsLength }) => {
       Array(radioBandsLength)
         .fill(1)
         .map((el, i) => (
-          <TabPanel key={i}>
+          <TabPanel key={i} px={{base: 1}}>
             <SingleRadio namePrefix={`configuration[${i}]`} index={i} remove={handleRemove(i)} isDisabled={!editing} />
           </TabPanel>
         )),
@@ -67,7 +67,7 @@ const Radios = ({ editing, arrayHelpers, radioBands, radioBandsLength }) => {
 
   return (
     <Card variant="widget">
-      <CardBody display="block">
+      <CardBody display="block" px={{base: 1, md: 12}}>
         <Box display="unset" position="unset" w="100%">
           <Tabs index={tabIndex} onChange={handleTabsChange} variant="enclosed" isLazy w="100%">
             <Box overflowX="auto" overflowY="auto" pt={1} h="56px">

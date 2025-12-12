@@ -9,7 +9,7 @@ import {
   MenuList,
   Text,
   useColorModeValue,
-  useDisclosure,
+  useDisclosure
 } from '@chakra-ui/react';
 import { TreeEntity, TreeVenue, useGetEntityTree } from 'hooks/Network/Entity';
 
@@ -77,7 +77,16 @@ const EntityBreadcrumb = ({ id }: Props) => {
   };
 
   return (
-    <Breadcrumb separator="/" spacing={1}>
+    <Breadcrumb
+      separator="/"
+      spacing={1}
+      sx={{
+        '& > ol': {
+          display: 'flex',
+          flexWrap: 'wrap',
+        },
+      }}
+    >
       {pathToEntity.map((entity) => (
         <BreadcrumbItem key={entity.uuid} isCurrentPage={entity.uuid === id}>
           <BreadcrumbLink href={`#/${entity.type}/${entity.uuid}`} fontWeight={entity.uuid === id ? 'bold' : undefined}>

@@ -55,12 +55,12 @@ const MapDisplayCard = ({ data, isLoading, refreshData }) => {
 
   return (
     <Card>
-      <CardHeader mb="10px">
+      <CardHeader mb="10px" flexWrap={{base: 'wrap', md: 'nowrap'}} >
         <Box>
           <Heading size="md">{t('map.title')}</Heading>
         </Box>
         <Flex w="100%" flexDirection="row" alignItems="center">
-          <Box ms="auto" display="flex">
+          <Box ms="auto" display="flex" flexWrap={{base: 'wrap', md: 'nowrap'}} mb={{base: 2, md: 0}}>
             <MapPicker map={mapId} setMap={setMapId} isLoading={isLoading} isDisabled={isEditing} />
             <CreateMapButton
               isDuplicating={mapId !== ''}

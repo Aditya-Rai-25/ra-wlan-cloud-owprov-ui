@@ -89,7 +89,7 @@ const IpV4Form = ({ isEnabled, isDisabled, namePrefix, ipv4, role, onToggle, onC
 
   return (
     <>
-      <Heading size="md" display="flex">
+      <Heading size="md" display="flex" flexWrap={{base: 'wrap', md: 'nowrap'}} gap={{base: 2, md: 0}}>
         <Text pt={1}>IpV4</Text>
         {onToggle !== undefined && (
           <Switch

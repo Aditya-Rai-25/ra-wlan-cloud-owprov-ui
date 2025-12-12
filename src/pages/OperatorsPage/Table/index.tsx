@@ -85,8 +85,8 @@ const OperatorsTable = () => {
     <Card>
       <CardHeader>
         <Heading size="md" mt={1}>{`${count ?? 0} ${t('operator.operator', { count: count ?? 0 })}`}</Heading>
-        <Spacer />
-        <Flex flexDirection="row" alignItems="center">
+        {/* <Spacer /> */}
+        <Flex flexDirection="row" alignItems="center" ml='auto' flexWrap={{base: 'wrap', md: 'nowrap'}}>
           <Box ms="auto" display="flex">
             <ColumnPicker
               columns={columns}

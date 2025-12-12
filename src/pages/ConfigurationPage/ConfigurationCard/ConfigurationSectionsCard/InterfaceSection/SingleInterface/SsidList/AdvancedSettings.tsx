@@ -77,6 +77,7 @@ const AdvancedSettings: React.FC<{ editing: boolean; namePrefix: string }> = ({ 
           options={[
             { value: 'radius-gw-proxy', label: 'radius-gw-proxy' },
             { value: 'wifi-steering', label: 'wifi-steering' },
+            { value: 'captive', label: 'captive' },
           ]}
         />
         <NumberField

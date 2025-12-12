@@ -18,12 +18,11 @@ const ConfigurationOverridesTable = ({ serialNumber, isDisabled }: Props) => {
 
   return (
     <>
-      <Flex mb={2}>
+      <Flex mb={2} flexWrap={{base: 'wrap', md: 'nowrap'}} gap={{base: 2, md: 0}}>
         <Heading size="sm" my="auto">
           {t('overrides.other')} ({overrides.length})
         </Heading>
-        <Spacer />
-        <HStack spacing={2}>
+        <HStack spacing={2} ml={{base: 0, md: 'auto'}}>
           <AddConfigurationOverrideButton isDisabled={isDisabled} />
           <ColumnPicker
             columns={columns as Column<unknown>[]}
