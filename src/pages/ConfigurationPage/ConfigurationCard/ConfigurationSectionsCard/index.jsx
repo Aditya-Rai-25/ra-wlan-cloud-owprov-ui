@@ -352,11 +352,10 @@ const ConfigurationSectionsCard = ({ configId, editing, setSections, label, onDe
   }, [defaultConfig]);
 
   return (
-    <Card px={label ? 0 : undefined}>
-      <CardHeader>
+    <Card mt={3} px={label ? 0 : undefined}>
+      <CardHeader p={2}>
         <Heading size="md">{label ?? configuration?.name}</Heading>
-        <Spacer />
-        <Box>
+        <Box ml={{base: 0, md: 'auto'}}>
           <ViewConfigWarningsModal
             warnings={{
               globals: globals.warnings ?? [],
@@ -415,7 +414,7 @@ const ConfigurationSectionsCard = ({ configId, editing, setSections, label, onDe
           {onDelete && <DeleteButton isDisabled={!editing} onClick={onDelete} ml={2} />}
         </Box>
       </CardHeader>
-      <CardBody>
+      <CardBody px={{base: 0, md: '12px'}}>
         {!configuration && isFetching ? (
           <Center w="100%">
             <Spinner size="xl" />
@@ -424,7 +423,7 @@ const ConfigurationSectionsCard = ({ configId, editing, setSections, label, onDe
           <LoadingOverlay isLoading={isFetching}>
             <Box display="unset" position="unset" w="100%">
               <Tabs variant="enclosed" w="100%" index={tabIndex} onChange={onTabChange}>
-                <TabList>
+                <TabList flexWrap={{base: 'wrap', md: 'nowrap'}}>
                   {activeConfigurations.includes('globals') && <Tab>{t('configurations.globals')}</Tab>}
                   {activeConfigurations.includes('unit') && <Tab>{t('configurations.unit')}</Tab>}
                   {activeConfigurations.includes('metrics') && <Tab>{t('configurations.metrics')}</Tab>}
@@ -435,7 +434,7 @@ const ConfigurationSectionsCard = ({ configId, editing, setSections, label, onDe
                 </TabList>
                 <TabPanels>
                   {activeConfigurations.includes('globals') && (
-                    <TabPanel>
+                    <TabPanel px={{base:1, md: 12}}>
                       <GlobalsSection
                         editing={editing}
                         setSection={setGlobals}
@@ -445,7 +444,7 @@ const ConfigurationSectionsCard = ({ configId, editing, setSections, label, onDe
                     </TabPanel>
                   )}
                   {activeConfigurations.includes('unit') && (
-                    <TabPanel>
+                    <TabPanel px={{base:1, md: 12}}>
                       <UnitSection
                         editing={editing}
                         setSection={setUnit}
@@ -455,7 +454,7 @@ const ConfigurationSectionsCard = ({ configId, editing, setSections, label, onDe
                     </TabPanel>
                   )}
                   {activeConfigurations.includes('metrics') && (
-                    <TabPanel>
+                    <TabPanel px={{base:1, md: 12}}>
                       <MetricsSection
                         editing={editing}
                         setSection={setMetrics}
@@ -465,7 +464,7 @@ const ConfigurationSectionsCard = ({ configId, editing, setSections, label, onDe
                     </TabPanel>
                   )}
                   {activeConfigurations.includes('services') && (
-                    <TabPanel>
+                    <TabPanel px={{base:1, md: 12}}>
                       <ServicesSection
                         editing={editing}
                         setSection={setServices}
@@ -475,7 +474,7 @@ const ConfigurationSectionsCard = ({ configId, editing, setSections, label, onDe
                     </TabPanel>
                   )}
                   {activeConfigurations.includes('radios') && (
-                    <TabPanel>
+                    <TabPanel px={{base:1, md: 12}}>
                       <RadiosSection
                         editing={editing}
                         setSection={setRadios}
@@ -485,7 +484,7 @@ const ConfigurationSectionsCard = ({ configId, editing, setSections, label, onDe
                     </TabPanel>
                   )}
                   {activeConfigurations.includes('interfaces') && (
-                    <TabPanel>
+                    <TabPanel px={{base:1, md: 12}}>
                       <InterfacesSection
                         editing={editing}
                         setSection={setInterfaces}

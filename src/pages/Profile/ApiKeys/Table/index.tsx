@@ -37,6 +37,7 @@ const ApiKeyTable = ({ userId }: Props) => {
         </HStack>
       </CardHeader>
       <CardBody>
+      <Box overflowX="auto">
         <DataTable
           columns={columns as Column<object>[]}
           saveSettingsId="apiKeys.profile.table"
@@ -48,6 +49,7 @@ const ApiKeyTable = ({ userId }: Props) => {
           showAllRows
           hideControls
         />
+        </Box>
       </CardBody>
     </>
   );

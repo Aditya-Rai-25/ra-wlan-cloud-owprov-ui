@@ -144,9 +144,9 @@ const GeneralInformationProfile = () => {
           >
             {({ isSubmitting }) => (
               <Form>
-                <Flex>
+                <Flex flexDirection={{ base: 'column', md: 'row' }}>
                   <StringField name="email" label={t('common.email')} isDisabled />
-                  <Box w={8} />
+                  <Box w={{ base: 0, md: 8 }} h={{ base: 4, md: 'auto' }} />
                   <StringField
                     name="name"
                     label={t('common.name')}
@@ -154,7 +154,8 @@ const GeneralInformationProfile = () => {
                     isRequired
                   />
                 </Flex>
-                <Flex my={4}>
+
+                <Flex my={4} flexDirection={{ base: 'column', md: 'row' }}>
                   <StringField
                     name="newPassword"
                     label={t('profile.new_password')}
@@ -162,7 +163,7 @@ const GeneralInformationProfile = () => {
                     emptyIsUndefined
                     hideButton
                   />
-                  <Box w={8} />
+                  <Box w={{ base: 0, md: 8 }} h={{ base: 4, md: 'auto' }} />
                   <StringField
                     name="newPasswordConfirm"
                     label={t('profile.new_password_confirmation')}
@@ -171,6 +172,7 @@ const GeneralInformationProfile = () => {
                     hideButton
                   />
                 </Flex>
+
                 <StringField
                   h="100px"
                   name="description"
@@ -178,6 +180,7 @@ const GeneralInformationProfile = () => {
                   isDisabled={isSubmitting || !isEditing}
                   isArea
                 />
+
                 <Box w="100%" mt={4} textAlign="right">
                   <Link href={passwordPolicyLink} isExternal>
                     {t('login.password_policy')}

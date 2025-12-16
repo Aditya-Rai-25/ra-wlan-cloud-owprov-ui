@@ -5,6 +5,8 @@ const CardHeader: StyleConfig = {
     display: 'flex',
     width: '100%',
     alignItems: 'center',
+    flexWrap: 'wrap',
+    gap: {base: "5px", md: 0}
   },
   variants: {
     panel: () => ({

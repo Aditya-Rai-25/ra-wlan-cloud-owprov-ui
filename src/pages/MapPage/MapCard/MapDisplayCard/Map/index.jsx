@@ -83,7 +83,7 @@ const Map = forwardRef(({ data, selectedMap, isEditing }, ref) => {
   }, [elements]);
 
   return (
-    <Center h="calc(100vh - 225px)" w="calc(100vw - 220px - 80px)">
+    <Center h="calc(100vh - 225px)" w={{base: "calc(100vw - 80px)", md: "calc(100vw - 220px - 80px)"}}>
       <ReactFlow
         nodes={nodes}
         edges={edges}

@@ -137,16 +137,19 @@ const CreateRadiusEndpointDetailsStep = ({ formRef, finishStep, orionAccounts, g
         <Heading mb={4} size="md" textDecoration="underline">
           Endpoint
         </Heading>
-        <SelectField name="Type" label="Endpoint Type" w="max-content" options={typeOptions} isRequired />
-        <Flex my={2}>
-          <Box>
-            <StringField name="Index" label="IP Index" isRequired />
+
+        <Box w={{ base: '100%', md: 'max-content' }} mb={2}>
+          <SelectField name="Type" label="Endpoint Type" w="100%" options={typeOptions} isRequired />
+        </Box>
+
+        <Flex my={2} wrap="wrap">
+          <Box w={{ base: '100%', md: 'auto' }} mb={{ base: 2, md: 0 }}>
+            <StringField name="Index" label="IP Index" isRequired w="100%" />
           </Box>
-          <Box mx={4}>
+          <Box mx={{ base: 0, md: 4 }} w={{ base: '100%', md: '160px' }} mb={{ base: 2, md: 0 }}>
             <SelectField
               name="PoolStrategy"
               label="Pool Strategy"
-              w="140px"
               options={[
                 { value: 'random', label: 'Random' },
                 { value: 'round_robin', label: 'Round-Robin' },
@@ -155,12 +158,17 @@ const CreateRadiusEndpointDetailsStep = ({ formRef, finishStep, orionAccounts, g
               isRequired
             />
           </Box>
-          <ToggleField name="UseGWProxy" label="Use Gateway Proxy" />
+          <Box w={{ base: '100%', md: 'auto' }}>
+            <ToggleField name="UseGWProxy" label="Use Gateway Proxy" />
+          </Box>
         </Flex>
-        <Flex my={2}>
-          <StringField name="NasIdentifier" label="NAS Identifier" w="300px" />
-          <Box mx={4}>
-            <NumberField name="AccountingInterval" label="Accounting Interval" w="120px" isRequired unit="s" />
+
+        <Flex my={2} wrap="wrap">
+          <Box w={{ base: '100%', md: '300px' }} mb={{ base: 2, md: 0 }}>
+            <StringField name="NasIdentifier" label="NAS Identifier" w="100%" />
+          </Box>
+          <Box mx={{ base: 0, md: 4 }} w={{ base: '100%', md: '260px' }}>
+            <NumberField name="AccountingInterval" label="Accounting Interval" isRequired unit="s" w="100%" />
           </Box>
         </Flex>
       </Box>

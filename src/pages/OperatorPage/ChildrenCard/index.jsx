@@ -20,9 +20,9 @@ const OperatorChildrenCard = ({ id }) => {
 
   return (
     <Card>
-      <CardBody>
+      <CardBody px={{base: 0, md: '12px'}}>
         <Tabs isLazy variant="enclosed" w="100%">
-          <TabList>
+          <TabList flexWrap={{base:'wrap', md: 'nowrap'}}>
             <Tab>{t('devices.title')}</Tab>
             <Tab>{t('subscribers.other')}</Tab>
             <Tab>{t('service.other')}</Tab>

@@ -18,9 +18,9 @@ const VenueDetailsForm = ({ isDisabled, venue }: Props) => {
 
   return (
     <Form>
-      <Flex>
+      <Flex wrap={{base: 'wrap', md: 'nowrap'}} gap={2}>
         <StringField name="name" label={t('common.name')} isDisabled={isDisabled} isRequired w="240px" />
-        <FormControl w="300px" mx={2}>
+        <FormControl w="300px" mx={{base: 0, md: 2}}>
           <FormLabel>{t('locations.one')}</FormLabel>
           <Flex>
             <LocationPickerCreator
@@ -34,7 +34,7 @@ const VenueDetailsForm = ({ isDisabled, venue }: Props) => {
             {isDisabled ? <LocationDisplayButton locationId={venue.location} /> : null}
           </Flex>
         </FormControl>
-        <FormControl ml={4} w="200px">
+        <FormControl ml={{base: 0, md: 4}} w="200px">
           <FormLabel>{t('common.modified')}</FormLabel>
           <Box pt={2}>
             <FormattedDate date={venue.modified} />

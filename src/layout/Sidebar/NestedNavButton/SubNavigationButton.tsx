@@ -7,9 +7,10 @@ import { SubRoute } from 'models/Routes';
 type Props = {
   isActive: (path: string) => boolean;
   route: SubRoute;
+  toggleSidebar: () => void;
 };
 
-const SubNavigationButton = ({ isActive, route }: Props) => {
+const SubNavigationButton = ({ isActive, route, toggleSidebar }: Props) => {
   const { t } = useTranslation();
   const activeTextColor = useColorModeValue('gray.700', 'white');
   const inactiveTextColor = useColorModeValue('gray.600', 'gray.200');
@@ -30,6 +31,7 @@ const SubNavigationButton = ({ isActive, route }: Props) => {
         }}
         border="none"
         textAlign="left"
+        onClick={toggleSidebar}
       >
         {route.label ?? t(route.name)}
       </Button>

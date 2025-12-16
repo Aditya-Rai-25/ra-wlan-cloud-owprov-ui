@@ -8,6 +8,7 @@ import NumberField from 'components/FormFields/NumberField';
 import ObjectArrayFieldModal from 'components/FormFields/ObjectArrayFieldModal';
 import SelectField from 'components/FormFields/SelectField';
 import StringField from 'components/FormFields/StringField';
+import ToggleField from 'components/FormFields/ToggleField';
 
 const CREDENTIALS_SCHEMA = (t: (str: string) => string, useDefault = false) => {
   const shape = object().shape({
@@ -98,7 +99,7 @@ const CaptiveForm = ({ isDisabled, namePrefix, onAuthModeChange, authMode }: Pro
             isRequired
             wantBase64
           />
-          <NumberField {...fieldProps('idle-timeout')} isRequired w="100px" />
+          <NumberField {...fieldProps('idle-timeout')} emptyIsUndefined acceptEmptyValue w="100px" />
           <NumberField {...fieldProps('session-timeout')} emptyIsUndefined acceptEmptyValue w="100px" />
           {authMode === 'credentials' && (
             <ObjectArrayFieldModal
@@ -113,7 +114,7 @@ const CaptiveForm = ({ isDisabled, namePrefix, onAuthModeChange, authMode }: Pro
           {authMode === 'uam' && (
             <>
               <StringField {...fieldProps('uam-server')} isRequired />
-              <StringField {...fieldProps('uam-secret')} isRequired hideButton />
+              <StringField {...fieldProps('uam-secret')} hideButton />
               <NumberField {...fieldProps('uam-port')} isRequired />
               <StringField {...fieldProps('nasid')} isRequired />
               <StringField {...fieldProps('nasmac')} emptyIsUndefined />
@@ -130,6 +131,13 @@ const CaptiveForm = ({ isDisabled, namePrefix, onAuthModeChange, authMode }: Pro
                 isRequired
               />
               <StringField {...fieldProps('ssid')} emptyIsUndefined />
+              <StringField {...fieldProps('final-redirect-url')} emptyIsUndefined />
+              <ToggleField
+                name={`${namePrefix}.mac-auth`}
+                label="mac-auth"
+                definitionKey="interface.ssid.captive.mac-auth"
+                isDisabled={isDisabled}
+              />
             </>
           )}
           {(authMode === 'radius' || authMode === 'uam') && (

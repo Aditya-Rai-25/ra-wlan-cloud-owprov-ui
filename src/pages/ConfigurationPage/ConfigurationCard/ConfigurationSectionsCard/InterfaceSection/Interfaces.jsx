@@ -43,11 +43,11 @@ const Interfaces = ({ editing, arrayHelpers, interfacesLength }) => {
   }
   return (
     <Card variant="widget">
-      <CardBody display="block">
+      <CardBody display="block" px={{base: '2px', md: '12px'}}>
         <Box display="unset" position="unset" w="100%">
           <Tabs index={tabIndex} onChange={handleTabsChange} variant="enclosed" isLazy w="100%">
-            <Box overflowX="auto" overflowY="auto" pt={1} h="56px">
-              <TabList mt={0}>
+            <Box overflowX="auto" overflowY="auto" pt={1} h={{base: "80px", md: "56px"}}>
+              <TabList mt={0} flexWrap={{base: editing ? 'wrap' : 'nowrap', md: 'nowrap'}}>
                 {Array(interfacesLength)
                   .fill(1)
                   .map((el, i) => (
@@ -65,7 +65,7 @@ const Interfaces = ({ editing, arrayHelpers, interfacesLength }) => {
               {Array(interfacesLength)
                 .fill(1)
                 .map((el, i) => (
-                  <TabPanel key={i}>
+                  <TabPanel key={i} p={{base: 0, md: 4}}>
                     <SingleInterface index={i} remove={handleRemove} editing={editing} />
                   </TabPanel>
                 ))}

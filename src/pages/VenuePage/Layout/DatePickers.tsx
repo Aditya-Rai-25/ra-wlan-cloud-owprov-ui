@@ -21,6 +21,7 @@ import ReactDatePicker from 'react-datepicker';
 import { useTranslation } from 'react-i18next';
 import CloseButton from 'components/Buttons/CloseButton';
 import SaveButton from 'components/Buttons/SaveButton';
+import 'react-datepicker/dist/react-datepicker.css';
 
 const CustomInputButton = React.forwardRef(
   ({ value, onClick }: { value: string; onClick: () => void }, ref: React.LegacyRef<HTMLButtonElement>) => (

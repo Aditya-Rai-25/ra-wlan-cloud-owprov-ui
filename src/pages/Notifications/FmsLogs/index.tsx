@@ -124,33 +124,43 @@ const FmsLogsCard = () => {
   return (
     <Card>
       <CardHeader>
-        <Spacer />
-        <HStack spacing={2}>
-          <ShownLogsDropdown
-            availableLogTypes={availableLogTypes}
-            setHiddenLogIds={setHiddenLogIds}
-            hiddenLogIds={hiddenLogIds}
-            helperLabels={{
-              1: t('logs.one'),
-            }}
-          />
-          <Select size="md" value={level} onChange={(e) => setLevel(e.target.value as '' | LogLevel)} w="130px">
-            <option value="">{t('common.select_all')}</option>
-            {Object.keys(colorSchemeMap).map((key) => (
-              <option key={uuid()} value={key}>
-                {uppercaseFirstLetter(key)}
-              </option>
-            ))}
-          </Select>
-          <CSVLink
-            filename={`logs_${dateForFilename(new Date().getTime() / 1000)}.csv`}
-            data={downloadableLogs as object[]}
-          >
-            <Tooltip label={t('logs.export')} hasArrow>
-              <IconButton aria-label={t('logs.export')} icon={<Download />} colorScheme="blue" />
-            </Tooltip>
-          </CSVLink>
-        </HStack>
+        <Flex
+          direction={{ base: 'column', md: 'row' }}
+          alignItems={{ base: 'flex-start', md: 'center' }}
+          w="100%"
+          py={{ base: 2, md: 0 }}
+        >
+          {/* First line: ShownLogsDropdown always stays here */}
+          <Box ml={{ base: 0, md: 'auto' }} mb={{ base: 2, md: 0 }}>
+            <ShownLogsDropdown
+              availableLogTypes={availableLogTypes}
+              setHiddenLogIds={setHiddenLogIds}
+              hiddenLogIds={hiddenLogIds}
+              helperLabels={{
+                1: t('logs.one'),
+              }}
+            />
+          </Box>
+          {/* Second line on mobile (next to dropdown on desktop) */}
+          <HStack spacing={2} ml={{ base: 0, md: 2 }}>
+            <Select size="md" value={level} onChange={(e) => setLevel(e.target.value as '' | LogLevel)} w="130px">
+              <option value="">{t('common.select_all')}</option>
+              {Object.keys(colorSchemeMap).map((key) => (
+                <option key={uuid()} value={key}>
+                  {uppercaseFirstLetter(key)}
+                </option>
+              ))}
+            </Select>
+            <CSVLink
+              filename={`logs_${dateForFilename(new Date().getTime() / 1000)}.csv`}
+              data={downloadableLogs as object[]}
+            >
+              <Tooltip label={t('logs.export')} hasArrow>
+                <IconButton aria-label={t('logs.export')} icon={<Download />} colorScheme="blue" />
+              </Tooltip>
+            </CSVLink>
+          </HStack>
+        </Flex>
       </CardHeader>
       <CardBody>
         <Box overflowX="auto" w="100%">

@@ -6,6 +6,7 @@ import ClientLifecycleCard from './ClientLifecycleCard';
 import VenueMonitoringTree from './MonitoringTree';
 import VenueStatusBar from './StatusBar';
 import { VenueMonitoringProvider } from './VenueMonitoringContext';
+import ClientLifecycleGraph from './ClientLifecycleGraph';
 
 type Props = {
   venueId: string;
@@ -29,6 +30,7 @@ const VenueMonitoringTab = ({ venueId }: Props) => (
         <Box />
         <ClientLifecycleCard venueId={venueId} />
       </Masonry>
+      <ClientLifecycleGraph venueId={venueId} />
     </>
   </VenueMonitoringProvider>
 );

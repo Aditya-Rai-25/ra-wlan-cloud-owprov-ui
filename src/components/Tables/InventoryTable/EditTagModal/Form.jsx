@@ -279,7 +279,7 @@ const EditTagForm = ({
     >
       {({ setFieldValue }) => (
         <Tabs variant="enclosed">
-          <TabList>
+          <TabList flexWrap={{base:'wrap', md: 'nowrap'}}>
             <Tab>{t('common.main')}</Tab>
             <Tab>{t('configurations.special_configuration')}</Tab>
             <Tab>{t('inventory.computed_configuration')}</Tab>
@@ -354,7 +354,7 @@ const EditTagForm = ({
                 </SimpleGrid>
               </Form>
             </TabPanel>
-            <TabPanel>
+            <TabPanel p={{base: 0, md: 4}}>
               <SpecialConfigurationManager
                 configId={isDeleted ? '' : tag.deviceConfiguration}
                 editing={editing}

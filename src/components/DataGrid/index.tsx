@@ -177,25 +177,42 @@ export const DataGrid = <TValue extends object>({
   return options.showAsCard ? (
     <Card>
       <CardHeader>
-        {typeof header.title === 'string' ? (
-          <Heading size="md" my="auto" mr={2}>
-            {header.title}
-          </Heading>
-        ) : (
-          header.title
-        )}
-        {header.leftContent}
-        <Spacer />
-        <HStack spacing={2}>
-          {header.otherButtons}
-          {header.addButton}
-          {options.hideTablePreferences ? null : (
-            // @ts-ignore
-            <TableSettingsModal<TValue> controller={controller} columns={columns} />
-          )}
-          {options.refetch ? <RefreshButton onClick={options.refetch} isCompact isFetching={isLoading} /> : null}
-        </HStack>
+        <Flex
+          w="100%"
+          direction={{ base: 'column', md: 'row' }}
+          align={{ base: 'flex-start', md: 'center' }}
+          justify="space-between"
+          gap={2}
+        >
+          {/* Line 1: Heading */}
+          <Flex align="center" wrap="wrap" mt={{ base: 2, md: 0 }}>
+            {typeof header.title === 'string' ? (
+              <Heading size={{ base: 'sm', md: 'md' }} my="auto" mr={2}>
+                {header.title}
+              </Heading>
+            ) : (
+              header.title
+            )}
+            {header.leftContent}
+          </Flex>
+
+          {/* Line 2: Other Buttons */}
+          <HStack spacing={2} ml={{ base: 0, md: 'auto' }}>
+            {header.otherButtons}
+          </HStack>
+
+          {/* Line 3: Action Buttons */}
+          <HStack spacing={2} mb={{ base: 2, md: 0 }}>
+            {header.addButton}
+            {!options.hideTablePreferences && (
+              // @ts-ignore
+              <TableSettingsModal<TValue> controller={controller} columns={columns} />
+            )}
+            {options.refetch && <RefreshButton onClick={options.refetch} isCompact isFetching={isLoading} />}
+          </HStack>
+        </Flex>
       </CardHeader>
+
       <CardBody display="flex" flexDirection="column">
         <LoadingOverlay isLoading={isLoading}>
           <TableContainer minH={minimumHeight}>

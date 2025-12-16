@@ -117,11 +117,12 @@ const CreateGoogleOrionAccountModal = () => {
               <Heading size="md" textDecoration="underline" mt={2}>
                 Google Orion
               </Heading>
-              <Flex my={2}>
-                <Box w="300px">
+              <Flex my={2} wrap={'wrap'}>
+              <Box w={{ base: '100%', md: 'auto' }} mb={{ base: 2, md: 0 }}>
+                
                   <GoogleOrionCertificateField isDisabled={isFieldDisabled} />
                 </Box>
-                <Box w="300px" ml={2}>
+                <Box w="300px" ml={{base: 0, md: 2}}>
                   <GoogleOrionPrivateKeyField isDisabled={isFieldDisabled} />
                 </Box>
               </Flex>

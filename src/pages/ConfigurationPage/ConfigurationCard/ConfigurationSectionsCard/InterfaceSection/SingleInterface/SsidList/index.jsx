@@ -43,10 +43,10 @@ const SsidList = ({ editing, index, arrayHelpers, ssidsLength }) => {
       <CardHeader mb={0}>
         <Heading size="md">SSIDs</Heading>
       </CardHeader>
-      <CardBody display="block">
+      <CardBody display="block" paddingInlineStart={{base: 0, md: 12}} paddingInlineEnd={{base: 0, md: 12}}>
         <Box display="unset" position="unset" w="100%">
           <Tabs index={tabIndex} onChange={handleTabsChange} variant="enclosed" isLazy w="100%">
-            <Box overflowX="auto" overflowY="auto" pt={1} h="56px">
+            <Box overflowX="auto" overflowY="auto" pt={1} h={{base: '80px', md: "56px"}}>
               <TabList mt={0}>
                 {Array(ssidsLength)
                   .fill(1)
@@ -66,7 +66,7 @@ const SsidList = ({ editing, index, arrayHelpers, ssidsLength }) => {
               {Array(ssidsLength)
                 .fill(1)
                 .map((el, i) => (
-                  <TabPanel key={i}>
+                  <TabPanel key={i} p={{base: 2, md: 4}}>
                     <SingleSsid
                       index={i}
                       namePrefix={`configuration[${index}].ssids[${i}]`}

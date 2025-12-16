@@ -100,6 +100,7 @@ const MapPicker = ({ isLoading, map, setMap, isDisabled }) => {
         onClick={defaultClick}
         rightIcon={prefMap === map ? <X size={20} /> : <FloppyDisk size={20} />}
         mr={2}
+        mb={{base: 2, md: 0}}
         isDisabled={isLoading || isDisabled}
       >
         {map === prefMap ? t('map.default_map') : t('map.set_as_default')}
@@ -109,6 +110,7 @@ const MapPicker = ({ isLoading, map, setMap, isDisabled }) => {
           container: (provided) => ({
             ...provided,
             width: '260px',
+            marginBottom: {base: 2, md: 0}
           }),
           menuPortal: (provided) => ({ ...provided, zIndex: 1000 }),
           menu: (provided) => ({ ...provided, zIndex: 1000 }),
@@ -122,6 +124,7 @@ const MapPicker = ({ isLoading, map, setMap, isDisabled }) => {
         }}
         formatGroupLabel={formatGroupLabel}
         isDisabled={isFetching || !maps || isLoading || isDisabled}
+        mb={{base: 2, md: 0}}
       />
     </>
   );
