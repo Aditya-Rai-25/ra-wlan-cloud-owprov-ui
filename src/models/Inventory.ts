@@ -24,6 +24,11 @@ export type InventoryTagApiResponse = {
       id: string;
       name: string;
     };
+    subscriber?: {
+      description?: string;
+      email?: string;
+      id: string;
+    };
     deviceConfiguration?: {
       description: string;
       id: string;

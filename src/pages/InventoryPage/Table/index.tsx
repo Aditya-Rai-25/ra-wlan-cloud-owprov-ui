@@ -13,6 +13,7 @@ import FirmwareUpgradeModal from 'components/Modals/SubscriberDevice/FirmwareUpg
 import WifiScanModal from 'components/Modals/SubscriberDevice/WifiScanModal';
 import DeviceSearchBar from 'components/SearchBars/DeviceSearch';
 import EntityCell from 'components/TableCells/EntityCell';
+import SubscriberCell from 'components/TableCells/SubscriberCell';
 import VenueCell from 'components/TableCells/VenueCell';
 import ConfigurationPushModal from 'components/Tables/InventoryTable/ConfigurationPushModal';
 import CreateConfigurationModal from 'components/Tables/InventoryTable/CreateTagModal';
@@ -119,6 +120,12 @@ const InventoryTable = () => {
     ),
     [],
   );
+  const subscriberCell = useCallback(
+    (cell: CellContext<InventoryTagApiResponse, unknown>) => (
+      <SubscriberCell subscriberEmail={cell.row.original.extendedInfo?.subscriber?.email ?? ''} subscriberId={cell.row.original.subscriber} />
+    ),
+    [],
+  );
 
   const onSearchClick = useCallback((serial: string) => {
     openEditModal({ serialNumber: serial });
@@ -178,12 +185,14 @@ const InventoryTable = () => {
       {
         id: 'subscriber',
         header: t('subscribers.one'),
-        accessorKey: 'extendedInfo.subscriber.name',
-        enableSorting: true,
+        accessorKey: 'extendedInfo.subscriber.email',
+        cell: subscriberCell,
+        enableSorting: false,
         meta: {
           customMaxWidth: '200px',
           customWidth: 'calc(15vh)',
           customMinWidth: '150px',
+          stopPropagation: true,
         },
       },
       {
