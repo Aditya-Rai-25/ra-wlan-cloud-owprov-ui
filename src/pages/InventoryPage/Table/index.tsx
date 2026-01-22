@@ -24,10 +24,8 @@ import {
   useGetInventoryTags,
   usePushConfig,
 } from 'hooks/Network/Inventory';
-import { useGetSubscribers } from 'hooks/Network/Subscribers';
 import { Device } from 'models/Device';
 import { InventoryTagApiResponse } from 'models/Inventory';
-import { Subscriber } from 'models/Subscriber';
 
 const InventoryTable = () => {
   const { t } = useTranslation();
@@ -42,7 +40,6 @@ const InventoryTable = () => {
   const { isOpen: isEditOpen, onOpen: openEdit, onClose: closeEdit } = useDisclosure();
   const { isOpen: isPushOpen, onOpen: openPush, onClose: closePush } = useDisclosure();
   const { data: tableSpecs } = useGetInventoryTableSpecs();
-  const { data: subscribers } = useGetSubscribers({ enabled: true });
   const scanModalProps = useDisclosure();
   const resetModalProps = useDisclosure();
   const upgradeModalProps = useDisclosure();
@@ -123,12 +120,11 @@ const InventoryTable = () => {
     ),
     [],
   );
-  const subscriberNameById = React.useMemo(() => new Map((subscribers ?? []).map((subscriber: Subscriber) => [subscriber.id, subscriber.name])), [subscribers]);
   const subscriberCell = useCallback(
     (cell: CellContext<InventoryTagApiResponse, unknown>) => (
-      <SubscriberCell subscriberName={subscriberNameById.get(cell.row.original.subscriber) ?? ''} subscriberId={cell.row.original.subscriber} />
+      <SubscriberCell subscriberEmail={cell.row.original.extendedInfo?.subscriber?.email ?? ''} subscriberId={cell.row.original.subscriber} />
     ),
-    [subscriberNameById],
+    [],
   );
 
   const onSearchClick = useCallback((serial: string) => {
@@ -189,7 +185,7 @@ const InventoryTable = () => {
       {
         id: 'subscriber',
         header: t('subscribers.one'),
-        accessorKey: 'extendedInfo.subscriber.name',
+        accessorKey: 'extendedInfo.subscriber.email',
         cell: subscriberCell,
         enableSorting: false,
         meta: {
@@ -237,7 +233,7 @@ const InventoryTable = () => {
         enableSorting: tableSpecs ? !!tableSpecs.find((spec: string) => spec === lower) : !isAlreadyDisabled,
       };
     });
-  }, [t, tableSpecs, subscriberCell, subscriberNameById]);
+  }, [t, tableSpecs]);
 
   const onUnassignedToggle = () => {
     setOnlyUnassigned.toggle();

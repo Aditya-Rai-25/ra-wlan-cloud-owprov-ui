@@ -4,23 +4,23 @@ import PropTypes from 'prop-types';
 import { useNavigate } from 'react-router-dom';
 
 const propTypes = {
-  subscriberName: PropTypes.string,
+  subscriberEmail: PropTypes.string,
   subscriberId: PropTypes.string,
 };
 const defaultProps = {
-  subscriberName: '',
+  subscriberEmail: '',
   subscriberId: '',
 };
 
-const SubscriberCell = ({ subscriberName, subscriberId }) => {
+const SubscriberCell = ({ subscriberEmail, subscriberId }) => {
   const navigate = useNavigate();
 
   const goTo = () => navigate(`/subscriber/${subscriberId}`);
 
-  if (subscriberName !== '' && subscriberId !== '') {
+  if (subscriberEmail !== '' && subscriberId !== '') {
     return (
       <Button size="sm" variant="link" onClick={goTo}>
-        {subscriberName}
+        {subscriberEmail}
       </Button>
     );
   }
