@@ -8,9 +8,11 @@ import DeviceRulesField from 'components/CustomFields/DeviceRulesField';
 import IpDetectionModalField from 'components/CustomFields/IpDetectionModalField';
 import NotesTable from 'components/CustomFields/NotesTable';
 import FormattedDate from 'components/FormattedDate';
+import SelectWithSearchField from 'components/FormFields/SelectWithSearchField';
 import StringField from 'components/FormFields/StringField';
 import { EditOperatorSchema } from 'constants/formSchemas';
 import { EntityShape } from 'constants/propShapes';
+import { useGetEntities } from 'hooks/Network/Entity';
 import { useUpdateOperator } from 'hooks/Network/Operators';
 import useMutationResult from 'hooks/useMutationResult';
 
@@ -24,6 +26,8 @@ const propTypes = {
 const EditOperatorForm = ({ editing, operator, formRef, stopEditing }) => {
   const { t } = useTranslation();
   const [formKey, setFormKey] = useState(uuid());
+  const { data: entities } = useGetEntities();
+  const entityOptions = entities?.map((ent) => ({ value: ent.id, label: `${ent.name}${ent.description ? `: ${ent.description}` : ''}` })) ?? [];
   const updateOperator = useUpdateOperator({ id: operator.id });
   const { onSuccess, onError } = useMutationResult({
     objName: t('operator.one'),
@@ -44,7 +48,7 @@ const EditOperatorForm = ({ editing, operator, formRef, stopEditing }) => {
       initialValues={operator}
       validationSchema={EditOperatorSchema(t)}
       onSubmit={(
-        { name, description, deviceRules, sourceIP, firmwareRCOnly, registrationId, notes },
+        { name, description, deviceRules, sourceIP, firmwareRCOnly, registrationId, notes, entityId },
         { setSubmitting, resetForm },
       ) =>
         updateOperator.mutateAsync(
@@ -55,6 +59,7 @@ const EditOperatorForm = ({ editing, operator, formRef, stopEditing }) => {
             sourceIP,
             firmwareRCOnly,
             registrationId,
+            entityId,
             notes: notes.filter((note) => note.isNew),
           },
           {
@@ -80,6 +85,7 @@ const EditOperatorForm = ({ editing, operator, formRef, stopEditing }) => {
                 <SimpleGrid minChildWidth="300px" spacing="20px">
                   <StringField name="name" label={t('common.name')} isDisabled={!editing} isRequired />
                   <StringField name="description" label={t('common.description')} isDisabled={!editing} />
+                  <SelectWithSearchField name="entityId" label={t('operator.associate_entity')} options={entityOptions} isDisabled={!editing} isRequired isPortal />
                   <DeviceRulesField isDisabled={!editing} />
                   <IpDetectionModalField name="sourceIP" setFieldValue={setFieldValue} isDisabled={!editing} />
                   <StringField

@@ -10,6 +10,7 @@ import { axiosProv } from 'utils/axiosInstances';
 
 export type CreateOperatorRequest = {
   deviceRules: DeviceRules;
+  entityId: string;
   sourceIp: string;
   registrationId: string;
   description?: string;
@@ -20,6 +21,7 @@ export type CreateOperatorRequest = {
 export type UpdateOperatorRequest = {
   defaultOperator?: boolean;
   devicesRules?: DeviceRules;
+  entityId?: string;
   name?: string;
   notes?: Note[];
   registrationId?: string;
@@ -29,6 +31,7 @@ export type OperatorApiResponse = {
   created: number;
   defaultOperator: boolean;
   devicesRules: DeviceRules;
+  entityId?: string;
   extendedInfo?: Record<string, unknown>;
   id: string;
   modified: number;
