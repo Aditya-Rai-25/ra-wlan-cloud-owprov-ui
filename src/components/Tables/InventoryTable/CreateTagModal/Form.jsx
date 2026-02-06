@@ -6,6 +6,7 @@ import { useTranslation } from 'react-i18next';
 import { v4 as uuid } from 'uuid';
 import SpecialConfigurationManager from '../../../CustomFields/SpecialConfigurationManager';
 import DeviceRulesField from 'components/CustomFields/DeviceRulesField';
+import DeviceTypeFields from 'components/Tables/InventoryTable/DeviceTypeFields';
 import SelectField from 'components/FormFields/SelectField';
 import SelectWithSearchField from 'components/FormFields/SelectWithSearchField';
 import StringField from 'components/FormFields/StringField';
@@ -13,6 +14,7 @@ import ToggleField from 'components/FormFields/ToggleField';
 import { CreateTagSchema } from 'constants/formSchemas';
 import { useGetEntities } from 'hooks/Network/Entity';
 import { useGetVenues } from 'hooks/Network/Venues';
+import { canEditConfiguration, isDeviceSelectionComplete } from 'utils/deviceGroup';
 
 const propTypes = {
   isOpen: PropTypes.bool.isRequired,
@@ -23,6 +25,8 @@ const propTypes = {
   onConfigurationChange: PropTypes.func.isRequired,
   configuration: PropTypes.instanceOf(Object),
   deviceTypesList: PropTypes.arrayOf(PropTypes.string).isRequired,
+  deviceClasses: PropTypes.arrayOf(PropTypes.string).isRequired,
+  deviceTypesByClass: PropTypes.instanceOf(Object).isRequired,
   entityId: PropTypes.string.isRequired,
   deviceClass: PropTypes.string.isRequired,
   subId: PropTypes.string.isRequired,
@@ -39,6 +43,8 @@ const CreateTagForm = ({
   refresh,
   formRef,
   deviceTypesList,
+  deviceClasses,
+  deviceTypesByClass,
   entityId,
   onConfigurationChange,
   configuration,
@@ -86,6 +92,7 @@ const CreateTagForm = ({
     setFormKey(uuid());
   }, [isOpen]);
 
+
   return (
     <Formik
       innerRef={formRef}
@@ -94,7 +101,8 @@ const CreateTagForm = ({
         serialNumber: '',
         name: '',
         description: '',
-        deviceType: deviceTypesList[0],
+        deviceGroup: deviceClasses.includes('ap') ? 'ap' : deviceClasses[0] ?? '',
+        deviceType: '',
         deviceRules: {
           rrm: 'inherit',
           rcOnly: 'inherit',
@@ -153,19 +161,14 @@ const CreateTagForm = ({
         });
       }}
     >
-      <Form>
+      {({ values }) => {
+        const hasDeviceSelection = isDeviceSelectionComplete(values.deviceGroup, values.deviceType);
+        return (
+          <Form>
         <SimpleGrid minChildWidth="300px" spacing="20px" mb={6}>
           <StringField name="serialNumber" label={t('inventory.serial_number')} isRequired />
           <StringField name="name" label={t('common.name')} isRequired />
-          <SelectField
-            name="deviceType"
-            label={t('inventory.device_type')}
-            options={deviceTypesList.map((deviceType) => ({
-              value: deviceType,
-              label: deviceType,
-            }))}
-            isRequired
-          />
+          <DeviceTypeFields deviceClasses={deviceClasses} deviceTypesByClass={deviceTypesByClass} />
           <SelectWithSearchField
             name="entity"
             label={t('inventory.parent')}
@@ -207,8 +210,15 @@ const CreateTagForm = ({
           <StringField name="description" label={t('common.description')} />
           <StringField name="note" label={t('common.note')} />
         </SimpleGrid>
-        <SpecialConfigurationManager editing onChange={onConfigurationChange} />
+        <SpecialConfigurationManager
+          editing={canEditConfiguration(values.deviceGroup, values.deviceType)}
+          isEnabledByDefault={hasDeviceSelection}
+          onChange={onConfigurationChange}
+          deviceGroup={values.deviceGroup}
+        />
       </Form>
+        );
+      }}
     </Formik>
   );
 };

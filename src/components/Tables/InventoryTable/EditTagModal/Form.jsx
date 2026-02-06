@@ -12,6 +12,7 @@ import ComputedConfigurationDisplay from './ComputedConfigurationDisplay';
 import ConfigurationOverrides from 'components/ConfigurationOverrides';
 import DeviceRulesField from 'components/CustomFields/DeviceRulesField';
 import NotesTable from 'components/CustomFields/NotesTable';
+import DeviceTypeFields from 'components/Tables/InventoryTable/DeviceTypeFields';
 import SelectField from 'components/FormFields/SelectField';
 import SelectWithSearchField from 'components/FormFields/SelectWithSearchField';
 import StringField from 'components/FormFields/StringField';
@@ -22,6 +23,7 @@ import { useUpdateSourceOverrides } from 'hooks/Network/ConfigurationOverride';
 import { useUpdateConfiguration } from 'hooks/Network/Configurations';
 import { useGetEntities } from 'hooks/Network/Entity';
 import { useGetVenues } from 'hooks/Network/Venues';
+import { canEditConfiguration, isDeviceSelectionComplete } from 'utils/deviceGroup';
 
 const propTypes = {
   editing: PropTypes.bool.isRequired,
@@ -32,6 +34,8 @@ const propTypes = {
   tag: PropTypes.shape(TagShape).isRequired,
   formRef: PropTypes.instanceOf(Object).isRequired,
   deviceTypesList: PropTypes.arrayOf(PropTypes.string).isRequired,
+  deviceClasses: PropTypes.arrayOf(PropTypes.string).isRequired,
+  deviceTypesByClass: PropTypes.instanceOf(Object).isRequired,
   onConfigurationChange: PropTypes.func.isRequired,
   configuration: PropTypes.instanceOf(Object),
 };
@@ -49,6 +53,8 @@ const EditTagForm = ({
   tag,
   formRef,
   deviceTypesList,
+  deviceClasses,
+  deviceTypesByClass,
   onConfigurationChange,
   configuration,
 }) => {
@@ -77,6 +83,17 @@ const EditTagForm = ({
     return newList.sort((a, b) => a.localeCompare(b));
   }, [deviceTypesList]);
 
+  const getDeviceGroupFromType = React.useCallback(
+    (deviceType) => {
+      if (!deviceType) return '';
+      const entries = Object.entries(deviceTypesByClass ?? {});
+      const match = entries.find(([, types]) => types?.includes(deviceType));
+      return match ? match[0] : '';
+    },
+    [deviceTypesByClass],
+  );
+
+
   useEffect(() => {
     setFormKey(uuid());
     setIsDeleted(false);
@@ -91,6 +108,7 @@ const EditTagForm = ({
         ...tag,
         entity: getEntityFromData(tag),
         devClass: tag.devClass !== '' ? tag.devClass : 'any',
+        deviceGroup: getDeviceGroupFromType(tag.deviceType) || '',
       }}
       validationSchema={UpdateTagSchema(t)}
       onSubmit={async (
@@ -277,11 +295,13 @@ const EditTagForm = ({
         }
       }}
     >
-      {({ setFieldValue }) => (
+      {({ values, setFieldValue }) => {
+        const hasDeviceSelection = isDeviceSelectionComplete(values.deviceGroup, values.deviceType);
+        return (
         <Tabs variant="enclosed">
           <TabList flexWrap={{base:'wrap', md: 'nowrap'}}>
             <Tab>{t('common.main')}</Tab>
-            <Tab>{t('configurations.special_configuration')}</Tab>
+            <Tab isDisabled={!hasDeviceSelection}>{t('configurations.special_configuration')}</Tab>
             <Tab>{t('inventory.computed_configuration')}</Tab>
             <Tab>{t('overrides.other')}</Tab>
             <Tab>{t('common.notes')}</Tab>
@@ -294,15 +314,10 @@ const EditTagForm = ({
                   <StringField name="serialNumber" label={t('inventory.serial_number')} isDisabled isRequired />
                   <StringField name="name" label={t('common.name')} isDisabled={!editing} isRequired />
                   <StringField name="description" label={t('common.description')} isDisabled={!editing} />
-                  <SelectField
-                    name="deviceType"
-                    label={t('inventory.device_type')}
-                    options={deviceListWithType.map((deviceType) => ({
-                      value: deviceType,
-                      label: deviceType,
-                    }))}
-                    isRequired
-                    isDisabled={!editing}
+                  <DeviceTypeFields
+                    isEditing={editing}
+                    deviceClasses={deviceClasses}
+                    deviceTypesByClass={deviceTypesByClass}
                   />
                   <SelectWithSearchField
                     name="entity"
@@ -357,9 +372,10 @@ const EditTagForm = ({
             <TabPanel p={{base: 0, md: 4}}>
               <SpecialConfigurationManager
                 configId={isDeleted ? '' : tag.deviceConfiguration}
-                editing={editing}
+                editing={editing && canEditConfiguration(values.deviceGroup, values.deviceType)}
                 onChange={onConfigurationChange}
                 onDelete={() => setIsDeleted(true)}
+                deviceGroup={values.deviceGroup}
               />
             </TabPanel>
             <TabPanel>
@@ -378,7 +394,8 @@ const EditTagForm = ({
             </TabPanel>
           </TabPanels>
         </Tabs>
-      )}
+        );
+      }}
     </Formik>
   );
 };
