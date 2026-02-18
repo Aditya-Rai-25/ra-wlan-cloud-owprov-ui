@@ -239,7 +239,7 @@ export const useSendEmailResetSubscriber = ({ id }: { id: string }) => {
   });
 };
 
-export const useDeleteSubscriber = ({ id }: { id: string }) => useMutation(() => axiosSec.delete(`subuser/${id}`, {}));
+export const useDeleteSubscriber = ({ id }: { id: string }) => useMutation(() => axiosProv.delete(`subscriber/${id}`, {}));
 
 export const useSendSubscriberEmailValidation = ({ refresh }: { refresh: () => void }) => {
   const { t } = useTranslation();
