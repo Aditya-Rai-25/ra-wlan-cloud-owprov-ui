@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { Modal, ModalOverlay, ModalContent, ModalBody, Center, Spinner } from '@chakra-ui/react';
+import { Modal, ModalOverlay, ModalContent, ModalBody, Center, Spinner, IconButton, Tooltip } from '@chakra-ui/react';
+import { ArrowLeft } from '@phosphor-icons/react';
 import { useTranslation } from 'react-i18next';
 import CreateSubscriberDeviceStep0 from './MultiStepForm/Step0';
 import CreateSubscriberDeviceStep1 from './MultiStepForm/Step1';
@@ -21,6 +22,30 @@ import { Configuration } from 'models/Configuration';
 import { Device, EditDevice } from 'models/Device';
 
 const defaultConfiguration: Configuration[] = [];
+const LAST_STEP = 3;
+const getStepFromError = (errorDescription: string): number | undefined => {
+  const msg = errorDescription.toLowerCase();
+
+  if (
+    msg.includes('devicegroup') ||
+    msg.includes('device group') ||
+    msg.includes('device type') ||
+    msg.includes('serial')
+  ) {
+    return 1;
+  }
+  if (msg.includes('location') || msg.includes('address') || msg.includes('country') || msg.includes('postal')) {
+    return 2;
+  }
+  if (msg.includes('contact') || msg.includes('email') || msg.includes('phone')) {
+    return 3;
+  }
+  if (msg.includes('subscriber') || msg.includes('billing') || msg.includes('service class')) {
+    return 0;
+  }
+
+  return undefined;
+};
 
 interface Props {
   refresh: () => void;
@@ -55,39 +80,48 @@ const CreateSubscriberDeviceModal = ({ refresh, operatorId, subscriberId, device
   const create = useCreateSubscriberDevice();
   const [step, setStep] = useState<number>(0);
   const [data, setData] = useState<Record<string, unknown>>({ operatorId });
+  const [isSubmittingRequest, setIsSubmittingRequest] = useState(false);
+  const visibleStep = step > LAST_STEP ? LAST_STEP : step;
+  const goBack = () => setStep((prevStep) => Math.max(prevStep - 1, 0));
 
-  const submit = (finalData: Record<string, unknown>) => {
+  const submit = async (finalData: Record<string, unknown>) => {
+    if (isSubmittingRequest) return;
+    setIsSubmittingRequest(true);
     const selectedSubscriberId = (finalData.subscriberId as string) ?? subscriberId;
     const subscriberPrimaryEmail = (subscribers ?? []).find((sub) => sub.id === selectedSubscriberId)?.email ?? '';
     const contactData = (finalData.contact as Record<string, unknown>) ?? {};
 
-    create.mutateAsync(
-      {
+    try {
+      await create.mutateAsync({
         ...finalData,
         contact: {
           ...contactData,
           primaryEmail: subscriberPrimaryEmail,
         },
         configuration: configuration ?? [],
-      } as EditDevice,
-      {
-        onSuccess: () => {
-          onSuccess({});
-        },
-        onError: (e) => {
-          onError(e, {});
-        },
-      },
-    );
+      } as EditDevice);
+      onSuccess({});
+    } catch (e) {
+      const errorDescription =
+        (e as { response?: { data?: { ErrorDescription?: string } } })?.response?.data?.ErrorDescription ?? '';
+      const stepFromError = getStepFromError(errorDescription);
+      if (stepFromError !== undefined) setStep(stepFromError);
+      onError(e, {});
+    } finally {
+      form?.setSubmitting(false);
+      setIsSubmittingRequest(false);
+      create.reset();
+    }
   };
 
   const finishStep = (newData: Record<string, unknown>) => {
     const finalData = { ...data, ...newData };
     setData(finalData);
-    if (step === 3) {
+    if (step === LAST_STEP) {
       submit(finalData);
+      return;
     }
-    setStep(step + 1);
+    setStep((prevStep) => Math.min(prevStep + 1, LAST_STEP));
   };
 
   const resetStep = () => {
@@ -110,11 +144,15 @@ const CreateSubscriberDeviceModal = ({ refresh, operatorId, subscriberId, device
   );
 
   useEffect(() => {
-    if (!isOpen) resetStep();
+    if (!isOpen) {
+      resetStep();
+      setIsSubmittingRequest(false);
+      create.reset();
+    }
   }, [isOpen]);
 
   const formStep = useMemo(() => {
-    if (step === 0)
+    if (visibleStep === 0)
       return (
         <CreateSubscriberDeviceStep0
           formRef={formRef}
@@ -122,9 +160,10 @@ const CreateSubscriberDeviceModal = ({ refresh, operatorId, subscriberId, device
           serviceClasses={serviceClasses}
           subscribers={subscribers ?? []}
           subscriberId={subscriberId}
+          initialData={data}
         />
       );
-    if (step === 1)
+    if (visibleStep === 1)
       return (
         <CreateSubscriberDeviceStep1
           formRef={formRef}
@@ -133,27 +172,39 @@ const CreateSubscriberDeviceModal = ({ refresh, operatorId, subscriberId, device
           deviceClasses={deviceClasses}
           deviceTypesByClass={deviceTypesByClass}
           onConfigurationChange={onConfigurationChange}
+          initialData={data}
         />
       );
-    if (step === 2)
+    if (visibleStep === 2)
       return (
         <CreateSubscriberDeviceStep2
           formRef={formRef}
           finishStep={finishStep}
           locationSuggestions={locationSuggestions}
+          initialData={data}
         />
       );
-    if (step === 3)
+    if (visibleStep === 3)
       return (
         <CreateSubscriberDeviceStep3
           formRef={formRef}
           finishStep={finishStep}
           contactSuggestions={contactSuggestions}
           subscriberPrimaryEmail={subscriberPrimaryEmail}
+          initialData={data}
         />
       );
     return null;
-  }, [data, step, subscribers, serviceClasses, deviceTypes, deviceClasses, deviceTypesByClass, subscriberPrimaryEmail]);
+  }, [
+    data,
+    visibleStep,
+    subscribers,
+    serviceClasses,
+    deviceTypes,
+    deviceClasses,
+    deviceTypesByClass,
+    subscriberPrimaryEmail,
+  ]);
 
   return (
     <>
@@ -165,12 +216,23 @@ const CreateSubscriberDeviceModal = ({ refresh, operatorId, subscriberId, device
             title={t('crud.create_object', { obj: t('certificates.device') })}
             right={
               <>
+                <Tooltip label={t('common.back')}>
+                  <IconButton
+                    colorScheme="gray"
+                    aria-label={t('common.back')}
+                    icon={<ArrowLeft size={20} />}
+                    type="button"
+                    onClick={goBack}
+                    isDisabled={visibleStep === 0 || isSubmittingRequest}
+                  />
+                </Tooltip>
                 <StepButton
                   onNext={form.submitForm}
-                  currentStep={step}
-                  lastStep={3}
-                  isLoading={form.isSubmitting || create.isLoading}
-                  isDisabled={!form.isValid || !isConfigurationValid}
+                  currentStep={visibleStep}
+                  lastStep={LAST_STEP}
+                  isLoading={isSubmittingRequest}
+                  isDisabled={!form.isValid || !isConfigurationValid || isSubmittingRequest}
+                  isCompact={false}
                 />
                 <CloseButton ml={2} onClick={closeModal} />
               </>

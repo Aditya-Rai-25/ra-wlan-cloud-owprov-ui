@@ -15,6 +15,7 @@ interface Props {
   finishStep: (v: Record<string, unknown>) => void;
   contactSuggestions: { serialNumber: string; contact: DeviceContact }[];
   subscriberPrimaryEmail: string;
+  initialData?: Record<string, unknown>;
 }
 
 const CreateSubscriberDeviceStep3 = (
@@ -22,10 +23,12 @@ const CreateSubscriberDeviceStep3 = (
     formRef,
     finishStep,
     contactSuggestions,
-    subscriberPrimaryEmail
+    subscriberPrimaryEmail,
+    initialData
   }: Props
 ) => {
   const { t } = useTranslation();
+  const initialContact = (initialData?.contact as Record<string, unknown>) ?? {};
 
   const onChange = (
     e: React.ChangeEvent<HTMLSelectElement>,
@@ -52,13 +55,14 @@ const CreateSubscriberDeviceStep3 = (
           firstname: '',
           lastname: '',
           initials: '',
-          primaryEmail: subscriberPrimaryEmail,
           secondaryEmail: '',
           mobiles: [],
           phones: [],
           description: '',
           accessPIN: '',
           note: '',
+          ...initialContact,
+          primaryEmail: subscriberPrimaryEmail,
         },
       }}
       validateOnMount
