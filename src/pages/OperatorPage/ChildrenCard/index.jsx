@@ -16,7 +16,7 @@ const propTypes = {
 
 const OperatorChildrenCard = ({ id }) => {
   const { t } = useTranslation();
-  const { data: operator, isFetching, refetch } = useGetOperator({ id });
+  const { data: operator, isFetching } = useGetOperator({ id });
 
   return (
     <Card>
@@ -38,7 +38,7 @@ const OperatorChildrenCard = ({ id }) => {
                   <OperatorDevicesTab operatorId={id} />
                 </TabPanel>
                 <TabPanel overflowX="auto">
-                  <SubscriberTab operatorId={id} refreshOperator={refetch} />
+                  <SubscriberTab operatorId={id} registrationId={operator?.registrationId ?? ''} />
                 </TabPanel>
                 <TabPanel overflowX="auto">
                   <ServiceClassTab operatorId={id} />

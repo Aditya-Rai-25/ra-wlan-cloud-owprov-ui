@@ -5,7 +5,22 @@ import { useTranslation } from 'react-i18next';
 import { v4 as uuid } from 'uuid';
 import { EditingSubscriber, Subscriber } from 'models/Subscriber';
 import { PageInfo } from 'models/Table';
-import { axiosSec } from 'utils/axiosInstances';
+import { axiosProv, axiosSec } from 'utils/axiosInstances';
+
+type SubscriberSignupRequest = {
+  email: string;
+  registrationId: string;
+  resend: boolean;
+};
+
+const signupSubscriber = ({ email, registrationId, resend }: SubscriberSignupRequest) =>
+  axiosProv.post('signup', undefined, {
+    params: {
+      email,
+      registrationId,
+      resend,
+    },
+  });
 
 export const useGetSubscriberCount = ({ enabled, operatorId }: { enabled: boolean; operatorId: string }) => {
   const { t } = useTranslation();
@@ -178,8 +193,8 @@ export const useGetSubscriber = ({ id, enabled }: { id: string; enabled?: boolea
 };
 
 export const useCreateSubscriber = () =>
-  useMutation((newSubscriber: EditingSubscriber) =>
-    axiosSec.post(`subuser/0${newSubscriber.emailValidation ? '?email_verification=true' : ''}`, newSubscriber),
+  useMutation((newSubscriber: Omit<SubscriberSignupRequest, 'resend'>) =>
+    signupSubscriber({ ...newSubscriber, resend: false }),
   );
 
 export const useUpdateSubscriber = ({ id }: { id: string }) =>
@@ -226,35 +241,38 @@ export const useSendEmailResetSubscriber = ({ id }: { id: string }) => {
 
 export const useDeleteSubscriber = ({ id }: { id: string }) => useMutation(() => axiosSec.delete(`subuser/${id}`, {}));
 
-export const useSendSubscriberEmailValidation = ({ id, refresh }: { id: string; refresh: () => void }) => {
+export const useSendSubscriberEmailValidation = ({ refresh }: { refresh: () => void }) => {
   const { t } = useTranslation();
   const toast = useToast();
 
-  return useMutation(() => axiosSec.put(`subuser/${id}?email_verification=true`, {}), {
-    onSuccess: () => {
-      toast({
-        id: `user-validation-email-success`,
-        title: t('common.success'),
-        description: t('users.success_sending_validation'),
-        status: 'success',
-        duration: 5000,
-        isClosable: true,
-        position: 'top-right',
-      });
-      refresh();
+  return useMutation(
+    (data: Omit<SubscriberSignupRequest, 'resend'>) => signupSubscriber({ ...data, resend: true }),
+    {
+      onSuccess: () => {
+        toast({
+          id: `user-validation-email-success`,
+          title: t('common.success'),
+          description: t('users.success_sending_validation'),
+          status: 'success',
+          duration: 5000,
+          isClosable: true,
+          position: 'top-right',
+        });
+        refresh();
+      },
+      onError: (e: AxiosError) => {
+        toast({
+          id: `user-validation-email-error`,
+          title: t('common.error'),
+          description: t('users.error_sending_validation', {
+            e: e?.response?.data?.ErrorDescription,
+          }),
+          status: 'error',
+          duration: 5000,
+          isClosable: true,
+          position: 'top-right',
+        });
+      },
     },
-    onError: (e: AxiosError) => {
-      toast({
-        id: `user-validation-email-error`,
-        title: t('common.error'),
-        description: t('users.error_sending_validation', {
-          e: e?.response?.data?.ErrorDescription,
-        }),
-        status: 'error',
-        duration: 5000,
-        isClosable: true,
-        position: 'top-right',
-      });
-    },
-  });
+  );
 };

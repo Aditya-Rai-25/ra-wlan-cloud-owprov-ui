@@ -13,9 +13,9 @@ import useFormRef from 'hooks/useFormRef';
 
 const propTypes = {
   refresh: PropTypes.func.isRequired,
-  operatorId: PropTypes.string.isRequired,
+  registrationId: PropTypes.string.isRequired,
 };
-const CreateSubscriberModal = ({ refresh, operatorId }) => {
+const CreateSubscriberModal = ({ refresh, registrationId }) => {
   const { t } = useTranslation();
   const { form, formRef } = useFormRef();
   const { isOpen, isConfirmOpen, onOpen, closeConfirm, closeModal, closeCancelAndForm } = useFormModal({
@@ -47,7 +47,7 @@ const CreateSubscriberModal = ({ refresh, operatorId }) => {
               onClose={closeCancelAndForm}
               refresh={refresh}
               formRef={formRef}
-              operatorId={operatorId}
+              registrationId={registrationId}
             />
           </ModalBody>
         </ModalContent>

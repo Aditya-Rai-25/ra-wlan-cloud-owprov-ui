@@ -9,25 +9,29 @@ import {
   Button,
   useDisclosure,
 } from '@chakra-ui/react';
+import { useQuery } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import WarningButton from 'components/Buttons/WarningButton';
 import { useSendSubscriberEmailValidation } from 'hooks/Network/Subscribers';
+import { Subscriber } from 'models/Subscriber';
+import { axiosProv } from 'utils/axiosInstances';
 
 interface Props {
-  id: string;
+  subscriber?: Subscriber;
   isWaitingForEmailVerification?: boolean;
   isDisabled?: boolean;
   refresh: () => void;
 }
 
 const defaultProps = {
+  subscriber: undefined,
   isWaitingForEmailVerification: false,
   isDisabled: false,
 };
 
 const WaitingForVerificationNotification = (
   {
-    id,
+    subscriber,
     isWaitingForEmailVerification,
     isDisabled,
     refresh
@@ -39,9 +43,25 @@ const WaitingForVerificationNotification = (
     refresh();
     onClose();
   };
-  const { mutateAsync: sendValidation, isLoading } = useSendSubscriberEmailValidation({ id, refresh: onSuccess });
+  const { mutateAsync: sendValidation, isLoading } = useSendSubscriberEmailValidation({ refresh: onSuccess });
+  const { data: registrationId } = useQuery(
+    ['subscriber-registration-id', subscriber?.owner],
+    () =>
+      axiosProv
+        .get(`operator/${subscriber?.owner ?? ''}`)
+        .then(({ data }: { data: { registrationId: string } }) => data.registrationId),
+    {
+      enabled: !!isWaitingForEmailVerification && !!subscriber?.owner,
+      staleTime: 30000,
+    },
+  );
+  const canSendValidation = !!subscriber?.email && !!registrationId;
 
-  const handleValidationClick = () => sendValidation();
+  const handleValidationClick = () =>
+    sendValidation({
+      email: subscriber?.email ?? '',
+      registrationId: registrationId ?? '',
+    });
 
   if (!isWaitingForEmailVerification) return null;
 
@@ -62,7 +82,12 @@ const WaitingForVerificationNotification = (
               <Button onClick={onClose} mr={4}>
                 {t('common.cancel')}
               </Button>
-              <Button onClick={handleValidationClick} isLoading={isLoading} colorScheme="red">
+              <Button
+                onClick={handleValidationClick}
+                isLoading={isLoading}
+                colorScheme="red"
+                isDisabled={!canSendValidation}
+              >
                 {t('common.confirm')}
               </Button>
             </AlertDialogFooter>

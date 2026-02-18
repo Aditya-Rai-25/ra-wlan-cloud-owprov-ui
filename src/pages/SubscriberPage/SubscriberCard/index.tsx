@@ -30,7 +30,7 @@ const SubscriberCard: React.FC<Props> = ({ id }) => {
         <Heading size="md">{subscriber?.name}</Heading>
         <SuspendedNotification id={id} refresh={refetch} isSuspended={subscriber?.suspended} isDisabled={editing} />
         <WaitingForVerification
-          id={id}
+          subscriber={subscriber}
           refresh={refetch}
           isWaitingForEmailVerification={subscriber?.waitingForEmailCheck}
           isDisabled={editing}
