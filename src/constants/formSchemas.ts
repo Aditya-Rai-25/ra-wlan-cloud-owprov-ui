@@ -401,14 +401,20 @@ export const ServiceClassSchema = (t: (str: string) => string) =>
 // Operator Contact Schemas
 export const SubscriberDeviceContactSchema = (t: (str: string) => string) =>
   Yup.object().shape({
-    type: Yup.string().required(t('form.required')),
+    type: Yup.string(),
     salutation: Yup.string(),
     title: Yup.string(),
-    firstname: Yup.string().required(t('form.required')).test('name_test', t('common.name_error'), testObjectName),
+    firstname: Yup.string().test('name_test', t('common.name_error'), (value) =>
+      value && value.length > 0 ? testObjectName(value) : true,
+    ),
     lastname: Yup.string(),
     initials: Yup.string(),
-    primaryEmail: Yup.string().email(t('form.invalid_email')).required(t('form.required')),
-    secondaryEmail: Yup.string().email(t('form.invalid_email')),
+    primaryEmail: Yup.string()
+      .transform((value, originalValue) => (originalValue === '' ? undefined : value))
+      .email(t('form.invalid_email')),
+    secondaryEmail: Yup.string()
+      .transform((value, originalValue) => (originalValue === '' ? undefined : value))
+      .email(t('form.invalid_email')),
     phones: Yup.array()
       .of(Yup.string())
       .test('test-phones', t('form.invalid_phone_numbers'), (v) => testPhoneNumberArray(v as string[])),
@@ -422,13 +428,13 @@ export const SubscriberDeviceContactSchema = (t: (str: string) => string) =>
 export const SubscriberDeviceLocationSchema = (t: (str: string) => string) =>
   Yup.object()
     .shape({
-      type: Yup.string().required(t('form.required')),
-      addressLineOne: Yup.string().required(t('form.required')),
+      type: Yup.string(),
+      addressLineOne: Yup.string(),
       addressLineTwo: Yup.string(),
-      city: Yup.string().required(t('form.required')),
-      state: Yup.string().required(t('form.required')),
-      postal: Yup.string().required(t('form.required')),
-      country: Yup.string().required(t('form.required')),
+      city: Yup.string(),
+      state: Yup.string(),
+      postal: Yup.string(),
+      country: Yup.string(),
       buildingName: Yup.string(),
       phones: Yup.array().of(Yup.string()),
       mobiles: Yup.array().of(Yup.string()),

@@ -116,11 +116,11 @@ const CreateSubscriberDeviceStep2 = (
               mb={2}
             />
             <SimpleGrid minChildWidth="300px" spacing="20px" mb={8}>
-              <StringField name="location.addressLineOne" label={t('locations.address_line_one')} isRequired />
+              <StringField name="location.addressLineOne" label={t('locations.address_line_one')} />
               <StringField name="location.addressLineTwo" label={t('locations.address_line_two')} />
-              <StringField name="location.city" label={t('locations.city')} isRequired />
-              <StringField name="location.state" label={t('locations.state')} isRequired />
-              <StringField name="location.postal" label={t('locations.postal')} isRequired />
+              <StringField name="location.city" label={t('locations.city')} />
+              <StringField name="location.state" label={t('locations.state')} />
+              <StringField name="location.postal" label={t('locations.postal')} />
               <SelectField name="location.country" label={t('locations.country')} options={COUNTRY_LIST} />
               <StringField name="location.buildingName" label={t('locations.building_name')} />
               <StringField name="location.geoCode" label={t('locations.geocode')} />

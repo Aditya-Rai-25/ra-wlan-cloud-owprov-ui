@@ -57,9 +57,17 @@ const CreateSubscriberDeviceModal = ({ refresh, operatorId, subscriberId, device
   const [data, setData] = useState<Record<string, unknown>>({ operatorId });
 
   const submit = (finalData: Record<string, unknown>) => {
+    const selectedSubscriberId = (finalData.subscriberId as string) ?? subscriberId;
+    const subscriberPrimaryEmail = (subscribers ?? []).find((sub) => sub.id === selectedSubscriberId)?.email ?? '';
+    const contactData = (finalData.contact as Record<string, unknown>) ?? {};
+
     create.mutateAsync(
       {
         ...finalData,
+        contact: {
+          ...contactData,
+          primaryEmail: subscriberPrimaryEmail,
+        },
         configuration: configuration ?? [],
       } as EditDevice,
       {
@@ -94,6 +102,11 @@ const CreateSubscriberDeviceModal = ({ refresh, operatorId, subscriberId, device
   const locationSuggestions = useMemo(
     () => devices.map(({ serialNumber, location }) => ({ serialNumber, location })),
     [devices],
+  );
+  const selectedSubscriberId = ((data.subscriberId as string) ?? subscriberId) || '';
+  const subscriberPrimaryEmail = useMemo(
+    () => (subscribers ?? []).find((sub) => sub.id === selectedSubscriberId)?.email ?? '',
+    [selectedSubscriberId, subscribers],
   );
 
   useEffect(() => {
@@ -136,10 +149,11 @@ const CreateSubscriberDeviceModal = ({ refresh, operatorId, subscriberId, device
           formRef={formRef}
           finishStep={finishStep}
           contactSuggestions={contactSuggestions}
+          subscriberPrimaryEmail={subscriberPrimaryEmail}
         />
       );
     return null;
-  }, [data, step, subscribers, serviceClasses, deviceTypes, deviceClasses, deviceTypesByClass]);
+  }, [data, step, subscribers, serviceClasses, deviceTypes, deviceClasses, deviceTypesByClass, subscriberPrimaryEmail]);
 
   return (
     <>
