@@ -14,7 +14,7 @@ type SubscriberSignupRequest = {
 };
 
 const signupSubscriber = ({ email, registrationId, resend }: SubscriberSignupRequest) =>
-  axiosProv.post('signup', undefined, {
+  axiosProv.post('subscriber', undefined, {
     params: {
       email,
       registrationId,
