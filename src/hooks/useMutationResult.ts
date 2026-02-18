@@ -4,6 +4,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
 import { useTranslation } from 'react-i18next';
 import { v4 as uuid } from 'uuid';
+import { saveReloadUiState } from 'utils/reloadState';
 
 interface Props {
   objName: string;
@@ -89,6 +90,10 @@ const useMutationResult = ({ objName, operationType, refresh, onClose, queryToIn
       });
       if (onClose) onClose();
       if (queryToInvalidate) queryClient.invalidateQueries(queryToInvalidate);
+      if (operationType === 'create' || operationType === 'update' || operationType === 'delete') {
+        saveReloadUiState();
+        window.location.reload();
+      }
     },
     [queryToInvalidate],
   );

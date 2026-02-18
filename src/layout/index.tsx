@@ -15,6 +15,7 @@ import { useAuth } from 'contexts/AuthProvider';
 import { RouteName } from 'models/Routes';
 import NotFoundPage from 'pages/NotFound';
 import routes from 'router/routes';
+import { restoreReloadUiState } from 'utils/reloadState';
 
 const Layout = () => {
   const { t } = useTranslation();
@@ -82,6 +83,10 @@ const Layout = () => {
   }, []);
 
   const goToMap = () => navigate('/map');
+
+  React.useEffect(() => {
+    restoreReloadUiState();
+  }, [location.pathname]);
 
   return (
     <>
