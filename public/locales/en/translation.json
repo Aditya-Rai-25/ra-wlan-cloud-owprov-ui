@@ -375,6 +375,7 @@
     "import_warning": "WARNING: This operation will overwrite all the configuration sections you might have already created. ",
     "imported_configuration": "Imported Configuration",
     "in_use_title": "{{name}} In Use",
+    "interface_objects_missing": "Interface objects are not created yet.",
     "interfaces": "Interfaces",
     "interfaces_instruction": "Please use a valid JSON string in the following form: { \"interfaces\": [] }. ",
     "invalid_resource": "Invalid or Deleted Resource",

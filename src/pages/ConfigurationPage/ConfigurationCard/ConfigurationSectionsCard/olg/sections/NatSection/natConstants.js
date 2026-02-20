@@ -72,7 +72,7 @@ export const NAT_RULE_SCHEMA = (t, useDefault = false) => {
     translation: object()
       .shape({
         address: string().required(t('form.required')).default(''),
-        port: number().moreThan(0).lessThan(65536).integer().default(undefined),
+        port: string().default(undefined),
         options: object()
           .shape({
             'port-mapping': string().default('none'),

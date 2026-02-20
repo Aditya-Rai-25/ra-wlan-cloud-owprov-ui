@@ -2,11 +2,12 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { Alert, AlertDescription, AlertIcon, Box, Flex, Heading, SimpleGrid, Spacer, Switch } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
 import { useFormikContext } from 'formik';
+import { useTranslation } from 'react-i18next';
 import DeleteButton from 'components/Buttons/DeleteButton';
-import NumberField from 'components/FormFields/NumberField';
 import SelectField from 'components/FormFields/SelectField';
 import StringField from 'components/FormFields/StringField';
 import ToggleField from 'components/FormFields/ToggleField';
+import NumberField from 'components/FormFields/NumberField';
 import useFastField from 'hooks/useFastField';
 
 const propTypes = {
@@ -23,6 +24,7 @@ const propTypes = {
 };
 
 const SingleRule = ({ editing, index, remove, mode, interfaceNameOptions }) => {
+  const { t } = useTranslation();
   const isSnat = mode === 'snat';
   const removeRule = () => remove();
   const basePath = `configuration.${mode}.rules[${index}]`;
@@ -115,7 +117,7 @@ const SingleRule = ({ editing, index, remove, mode, interfaceNameOptions }) => {
             {availableInterfaceOptions.length === 0 && (
               <Alert status="warning" variant="left-accent" mt={2}>
                 <AlertIcon />
-                <AlertDescription>Interface objects are not created yet.</AlertDescription>
+                <AlertDescription>{t('configurations.interface_objects_missing')}</AlertDescription>
               </Alert>
             )}
             <SimpleGrid minChildWidth="300px" spacing="20px" mt={2} w="100%">
@@ -146,13 +148,12 @@ const SingleRule = ({ editing, index, remove, mode, interfaceNameOptions }) => {
                 placeholder="Example: 192.168.1.10"
                 emptyIsUndefined
               />
-              <NumberField
+              <StringField
                 name={`${basePath}.source.port`}
                 label="port"
                 isDisabled={!editing}
-                min={1}
-                max={65535}
-                acceptEmptyValue
+                placeholder="Example: 80"
+                emptyIsUndefined
               />
             </SimpleGrid>
           </>
@@ -178,13 +179,12 @@ const SingleRule = ({ editing, index, remove, mode, interfaceNameOptions }) => {
                 placeholder="Example: 192.168.1.10"
                 emptyIsUndefined
               />
-              <NumberField
+              <StringField
                 name={`${basePath}.destination.port`}
                 label="port"
                 isDisabled={!editing}
-                min={1}
-                max={65535}
-                acceptEmptyValue
+                placeholder="Example: 80"
+                emptyIsUndefined
               />
             </SimpleGrid>
           </>
@@ -213,13 +213,12 @@ const SingleRule = ({ editing, index, remove, mode, interfaceNameOptions }) => {
                 placeholder="Example: masquerade or 192.168.1.100"
                 emptyIsUndefined
               />
-              <NumberField
+              <StringField
                 name={`${basePath}.translation.port`}
                 label="port"
                 isDisabled={!editing}
-                min={1}
-                max={65535}
-                acceptEmptyValue
+                placeholder="Example: 80"
+                emptyIsUndefined
               />
             </SimpleGrid>
 
