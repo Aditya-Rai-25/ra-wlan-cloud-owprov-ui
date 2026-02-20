@@ -17,9 +17,15 @@ const propTypes = {
   setSection: PropTypes.func.isRequired,
   sectionInformation: ConfigurationSectionShape.isRequired,
   removeSub: PropTypes.func.isRequired,
+  interfaceNameOptions: PropTypes.arrayOf(
+    PropTypes.shape({
+      label: PropTypes.string.isRequired,
+      value: PropTypes.string.isRequired,
+    }),
+  ),
 };
 
-const NatSection = ({ editing, setSection, sectionInformation, removeSub }) => {
+const NatSection = ({ editing, setSection, sectionInformation, removeSub, interfaceNameOptions }) => {
   const { t } = useTranslation();
   const [formKey, setFormKey] = useState(uuid());
 
@@ -84,7 +90,12 @@ const NatSection = ({ editing, setSection, sectionInformation, removeSub }) => {
               <SectionGeneralCard editing={editing} buttons={<DeleteButton onClick={removeNat} isDisabled={!editing} />} />
 
               <SimpleGrid minChildWidth="400px" spacing={4} w="100%">
-                <Nat editing={editing} rules={combinedRules} onRemoveRule={onRemoveRule} />
+                <Nat
+                  editing={editing}
+                  rules={combinedRules}
+                  onRemoveRule={onRemoveRule}
+                  interfaceNameOptions={interfaceNameOptions}
+                />
               </SimpleGrid>
             </VStack>
           </>
@@ -95,5 +106,8 @@ const NatSection = ({ editing, setSection, sectionInformation, removeSub }) => {
 };
 
 NatSection.propTypes = propTypes;
+NatSection.defaultProps = {
+  interfaceNameOptions: [],
+};
 
 export default React.memo(NatSection, isEqual);
