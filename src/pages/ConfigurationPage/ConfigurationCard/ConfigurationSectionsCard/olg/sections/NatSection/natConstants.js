@@ -55,13 +55,12 @@ export const NAT_RULE_SCHEMA = (t, useDefault = false) => {
       .default({ name: '' }),
     source: object()
       .shape({
-        address: string().required(t('form.required')).default(''),
+        address: string().default(undefined),
         port: string().default(undefined),
         fqdn: string().default(undefined),
         group: GROUP_SCHEMA,
       })
-      .required(t('form.required'))
-      .default({ address: '' }),
+      .default(undefined),
     destination: object()
       .shape({
         address: string().default(undefined),
@@ -72,8 +71,8 @@ export const NAT_RULE_SCHEMA = (t, useDefault = false) => {
       .default(undefined),
     translation: object()
       .shape({
-        address: string().required(t('form.required')).default('masquerade'),
-        port: number().moreThan(0).lessThan(65536).integer().default(undefined),
+        address: string().required(t('form.required')).default(''),
+        port: string().default(undefined),
         options: object()
           .shape({
             'port-mapping': string().default('none'),
@@ -82,7 +81,7 @@ export const NAT_RULE_SCHEMA = (t, useDefault = false) => {
           .default(undefined),
       })
       .required(t('form.required'))
-      .default({ address: 'masquerade' }),
+      .default({ address: '' }),
   });
 
   return useDefault ? shape : shape.nullable().default(undefined);
@@ -93,11 +92,11 @@ export const DNAT_RULE_SCHEMA = (t, useDefault = false) => {
     ...BASE_RULE_SHAPE(t),
     'in-interface': object()
       .shape({
-        name: string().default(undefined),
+        name: string().required(t('form.required')).default(''),
         group: string().default(undefined),
       })
       .required(t('form.required'))
-      .default({}),
+      .default({ name: '' }),
     translation: object()
       .shape({
         redirect: object()
@@ -105,7 +104,7 @@ export const DNAT_RULE_SCHEMA = (t, useDefault = false) => {
             port: string().default(undefined),
           })
           .default(undefined),
-        address: string().default(undefined),
+        address: string().required(t('form.required')).default(''),
         port: string().default(undefined),
         options: object()
           .shape({
@@ -115,7 +114,7 @@ export const DNAT_RULE_SCHEMA = (t, useDefault = false) => {
           .default(undefined),
       })
       .required(t('form.required'))
-      .default({}),
+      .default({ address: '' }),
   });
 
   return useDefault ? shape : shape.nullable().default(undefined);

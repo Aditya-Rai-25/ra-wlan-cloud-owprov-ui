@@ -399,6 +399,22 @@ const ConfigurationSectionsCard = ({ configId, editing, setSections, label, onDe
     setConfigSectionsFromArray(newConf, true);
   };
 
+  const interfaceNameOptions = useMemo(() => {
+    const interfaceEntries = interfaces?.data?.configuration;
+    if (!Array.isArray(interfaceEntries)) return [];
+
+    const seen = new Set();
+    return interfaceEntries
+      .map((entry) => entry?.name)
+      .filter((name) => typeof name === 'string' && name.trim() !== '')
+      .filter((name) => {
+        if (seen.has(name)) return false;
+        seen.add(name);
+        return true;
+      })
+      .map((name) => ({ label: name, value: name }));
+  }, [interfaces?.data?.configuration]);
+
   useEffect(() => {
     if (!editing && configuration) setConfigSectionsFromArray(configuration.configuration);
   }, [editing]);
@@ -599,7 +615,13 @@ const ConfigurationSectionsCard = ({ configId, editing, setSections, label, onDe
                   )}
                   {activeConfigurations.includes('nat') && (
                     <TabPanel px={{ base: 1, md: 12 }}>
-                      <NatSection editing={editing} setSection={setNat} sectionInformation={nat} removeSub={removeSub} />
+                      <NatSection
+                        editing={editing}
+                        setSection={setNat}
+                        sectionInformation={nat}
+                        removeSub={removeSub}
+                        interfaceNameOptions={interfaceNameOptions}
+                      />
                     </TabPanel>
                   )}
                   {activeConfigurations.includes('radios') && (
