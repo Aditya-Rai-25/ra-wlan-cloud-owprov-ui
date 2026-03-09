@@ -46,10 +46,10 @@ const SubscriberDeviceContactForm = (
         isDisabled={!editing}
       />
       <StringField name="contact.title" label={t('contacts.title')} isDisabled={!editing} />
-      <StringField name="contact.firstname" label={t('contacts.first_name')} isRequired isDisabled={!editing} />
+      <StringField name="contact.firstname" label={t('contacts.first_name')} isDisabled={!editing} />
       <StringField name="contact.lastname" label={t('contacts.last_name')} isDisabled={!editing} />
       <StringField name="contact.initials" label={t('contacts.initials')} isDisabled={!editing} />
-      <StringField name="contact.primaryEmail" label={t('contacts.primary_email')} isRequired isDisabled={!editing} />
+      <StringField name="contact.primaryEmail" label={t('contacts.primary_email')} isDisabled />
       <StringField name="contact.secondaryEmail" label={t('contacts.secondary_email')} isDisabled={!editing} />
       <CreatableSelectField
         name="contact.phones"

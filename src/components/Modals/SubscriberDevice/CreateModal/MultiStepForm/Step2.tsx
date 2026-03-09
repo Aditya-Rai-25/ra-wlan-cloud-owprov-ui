@@ -16,16 +16,19 @@ interface Props {
   formRef: React.Ref<FormikProps<Record<string, unknown>>> | undefined;
   finishStep: (v: Record<string, unknown>) => void;
   locationSuggestions: { serialNumber: string; location: DeviceLocation }[];
+  initialData?: Record<string, unknown>;
 }
 
 const CreateSubscriberDeviceStep2 = (
   {
     formRef,
     finishStep,
-    locationSuggestions
+    locationSuggestions,
+    initialData
   }: Props
 ) => {
   const { t } = useTranslation();
+  const initialLocation = (initialData?.location as Record<string, unknown>) ?? {};
 
   const onChange = (
     e: React.ChangeEvent<HTMLSelectElement>,
@@ -39,26 +42,29 @@ const CreateSubscriberDeviceStep2 = (
         addressLineOne:
           found.location.addressLines && found.location.addressLines[0] ? found.location.addressLines[0] : '',
         addressLineTwo:
-          found.location.addressLines && found.location.addressLines.length >= 1 ? found.location.addressLines[1] : '',
+          found.location.addressLines && found.location.addressLines.length >= 2 ? found.location.addressLines[1] : '',
       });
   };
 
   return (
     <Formik
       innerRef={formRef as (instance: FormikProps<{ location: DeviceLocation }> | null) => void}
+      enableReinitialize
       initialValues={{
         location: {
-          type: 'SERVICE',
-          addressLineOne: '',
-          addressLineTwo: '',
-          city: '',
-          state: '',
-          postal: '',
-          country: '',
-          buildingName: '',
-          mobiles: [],
-          phones: [],
-          geoCode: '',
+          type: (initialLocation.type as string) ?? 'SERVICE',
+          addressLineOne:
+            (initialLocation.addressLineOne as string) ?? ((initialLocation.addressLines as string[] | undefined)?.[0] ?? ''),
+          addressLineTwo:
+            (initialLocation.addressLineTwo as string) ?? ((initialLocation.addressLines as string[] | undefined)?.[1] ?? ''),
+          city: (initialLocation.city as string) ?? '',
+          state: (initialLocation.state as string) ?? '',
+          postal: (initialLocation.postal as string) ?? '',
+          country: (initialLocation.country as string) ?? '',
+          buildingName: (initialLocation.buildingName as string) ?? '',
+          mobiles: (initialLocation.mobiles as string[]) ?? [],
+          phones: (initialLocation.phones as string[]) ?? [],
+          geoCode: (initialLocation.geoCode as string) ?? '',
         },
       }}
       validateOnMount
@@ -116,11 +122,11 @@ const CreateSubscriberDeviceStep2 = (
               mb={2}
             />
             <SimpleGrid minChildWidth="300px" spacing="20px" mb={8}>
-              <StringField name="location.addressLineOne" label={t('locations.address_line_one')} isRequired />
+              <StringField name="location.addressLineOne" label={t('locations.address_line_one')} />
               <StringField name="location.addressLineTwo" label={t('locations.address_line_two')} />
-              <StringField name="location.city" label={t('locations.city')} isRequired />
-              <StringField name="location.state" label={t('locations.state')} isRequired />
-              <StringField name="location.postal" label={t('locations.postal')} isRequired />
+              <StringField name="location.city" label={t('locations.city')} />
+              <StringField name="location.state" label={t('locations.state')} />
+              <StringField name="location.postal" label={t('locations.postal')} />
               <SelectField name="location.country" label={t('locations.country')} options={COUNTRY_LIST} />
               <StringField name="location.buildingName" label={t('locations.building_name')} />
               <StringField name="location.geoCode" label={t('locations.geocode')} />

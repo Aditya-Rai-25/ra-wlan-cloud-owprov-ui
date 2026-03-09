@@ -40,6 +40,7 @@ interface Props {
   deviceClasses: string[];
   deviceTypesByClass: Record<string, string[]>;
   onConfigurationChange: (conf: Configuration) => void;
+  initialData?: Record<string, unknown>;
 }
 
 const CreateSubscriberDeviceStep1 = (
@@ -49,17 +50,20 @@ const CreateSubscriberDeviceStep1 = (
     deviceTypes,
     deviceClasses,
     deviceTypesByClass,
-    onConfigurationChange
+    onConfigurationChange,
+    initialData
   }: Props
 ) => {
   const { t } = useTranslation();
   const defaultGroup = deviceClasses.includes('ap') ? 'ap' : deviceClasses[0] ?? '';
+  const initialGroup = (initialData?.deviceGroup as string) ?? defaultGroup;
 
   return (
     <Formik
       validateOnMount
       innerRef={formRef}
-      initialValues={{ ...Schema(t).cast(undefined), deviceGroup: defaultGroup }}
+      enableReinitialize
+      initialValues={{ ...Schema(t).cast(undefined), ...initialData, deviceGroup: initialGroup }}
       validationSchema={Schema(t)}
       onSubmit={(data) => finishStep(data)}
     >

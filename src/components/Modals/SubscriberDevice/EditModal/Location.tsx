@@ -59,13 +59,12 @@ const SubscriberDeviceLocationForm = (
         <StringField
           name="location.addressLineOne"
           label={t('locations.address_line_one')}
-          isRequired
           isDisabled={!editing}
         />
         <StringField name="location.addressLineTwo" label={t('locations.address_line_two')} isDisabled={!editing} />
-        <StringField name="location.city" label={t('locations.city')} isRequired isDisabled={!editing} />
-        <StringField name="location.state" label={t('locations.state')} isRequired isDisabled={!editing} />
-        <StringField name="location.postal" label={t('locations.postal')} isRequired isDisabled={!editing} />
+        <StringField name="location.city" label={t('locations.city')} isDisabled={!editing} />
+        <StringField name="location.state" label={t('locations.state')} isDisabled={!editing} />
+        <StringField name="location.postal" label={t('locations.postal')} isDisabled={!editing} />
         <SelectField
           name="location.country"
           label={t('locations.country')}

@@ -288,9 +288,11 @@ const ConfigurationSectionsCard = ({ configId, editing, setSections, label, onDe
       setConfigSectionsFromArray(data.configuration);
     },
   });
+  const hasPersistedConfigId = configId !== undefined && configId !== null && configId !== '';
+  const persistedBaselineConfiguration = hasPersistedConfigId ? configuration?.configuration : defaultConfig;
   const persistedNormalizedConfigurations = useMemo(
-    () => getNormalizedConfigurationSnapshotFromRaw(configuration?.configuration),
-    [configuration?.configuration],
+    () => getNormalizedConfigurationSnapshotFromRaw(persistedBaselineConfiguration),
+    [persistedBaselineConfiguration],
   );
   const currentNormalizedConfigurations = useMemo(
     () =>

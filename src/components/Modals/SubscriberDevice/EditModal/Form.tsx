@@ -77,6 +77,10 @@ const EditSubscriberDeviceForm = (
     valueKey: 'id',
     labelKey: 'name',
   });
+  const getSubscriberPrimaryEmail = React.useCallback(
+    (id?: string) => externalData.subscribers.find((subscriber) => subscriber.id === id)?.email ?? '',
+    [externalData.subscribers],
+  );
   const getDeviceGroupFromType = React.useCallback(
     (deviceType: string) => {
       if (!deviceType) return '';
@@ -104,6 +108,13 @@ const EditSubscriberDeviceForm = (
       initialValues={{
         ...subscriberDevice,
         deviceGroup: defaultGroup,
+        contact: {
+          ...subscriberDevice.contact,
+          primaryEmail:
+            getSubscriberPrimaryEmail((subscriberDevice as unknown as { subscriberId?: string }).subscriberId) ||
+            subscriberDevice.contact?.primaryEmail ||
+            '',
+        },
         location: {
           ...subscriberDevice.location,
           addressLineOne: subscriberDevice.location.addressLines ? subscriberDevice.location.addressLines[0] : '',
@@ -114,11 +125,19 @@ const EditSubscriberDeviceForm = (
       onSubmit={(data, { setSubmitting, resetForm }) => {
         const addressLines = [data.location.addressLineOne ?? ''];
         if (data.location.addressLineTwo) addressLines.push(data.location.addressLineTwo);
+        const subscriberPrimaryEmail =
+          getSubscriberPrimaryEmail((data as unknown as { subscriberId?: string }).subscriberId) ||
+          data.contact.primaryEmail ||
+          '';
 
         updateSubscriberDevice.mutateAsync(
           {
             ...data,
             configuration: configuration ?? undefined,
+            contact: {
+              ...data.contact,
+              primaryEmail: subscriberPrimaryEmail,
+            },
             location: {
               ...data.location,
               addressLines,
@@ -168,6 +187,7 @@ const EditSubscriberDeviceForm = (
                       options={subscriberOptions}
                       isRequired
                       isDisabled={!editing}
+                      onChangeEffect={(e) => setFieldValue('contact.primaryEmail', getSubscriberPrimaryEmail(e.target.value))}
                     />
                     <StringField name="description" label={t('common.description')} isDisabled={!editing} />
                   </SimpleGrid>

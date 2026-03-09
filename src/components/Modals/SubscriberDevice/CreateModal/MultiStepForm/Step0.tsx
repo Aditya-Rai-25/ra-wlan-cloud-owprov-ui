@@ -29,10 +29,12 @@ interface Props {
   serviceClasses: ServiceClass[];
   subscribers: Subscriber[];
   subscriberId?: string;
+  initialData?: Record<string, unknown>;
 }
 
 const defaultProps = {
   subscriberId: undefined,
+  initialData: undefined,
 };
 
 const CreateSubscriberDeviceStep0 = (
@@ -41,7 +43,8 @@ const CreateSubscriberDeviceStep0 = (
     finishStep,
     serviceClasses,
     subscribers,
-    subscriberId
+    subscriberId,
+    initialData
   }: Props
 ) => {
   const { t } = useTranslation();
@@ -52,12 +55,14 @@ const CreateSubscriberDeviceStep0 = (
     valueKey: 'id',
     labelKey: 'name',
   });
+  const initialSubscriberId = (initialData?.subscriberId as string) ?? subscriberId ?? '';
 
   return (
     <Formik
       validateOnMount
       innerRef={formRef}
-      initialValues={{ ...Schema(t).cast(undefined), subscriberId }}
+      enableReinitialize
+      initialValues={{ ...Schema(t).cast(undefined), ...initialData, subscriberId: initialSubscriberId }}
       validationSchema={Schema(t)}
       // @ts-ignore
       onSubmit={(data) => finishStep({ ...data, notes: data.note.length > 0 ? [{ note: data.note }] : undefined })}

@@ -1,6 +1,7 @@
 import { Note } from './Note';
 
 export interface Subscriber {
+  email?: string;
   name: string;
   description: string;
   currentPassword?: string;
@@ -12,6 +13,7 @@ export interface Subscriber {
 }
 
 export interface EditingSubscriber {
+  email?: string;
   name?: string;
   description?: string;
   currentPassword?: string;

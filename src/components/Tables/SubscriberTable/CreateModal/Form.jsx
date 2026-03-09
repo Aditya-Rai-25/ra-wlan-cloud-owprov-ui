@@ -1,15 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { ExternalLinkIcon } from '@chakra-ui/icons';
-import { Box, Flex, Link, SimpleGrid } from '@chakra-ui/react';
+import { SimpleGrid, useToast } from '@chakra-ui/react';
 import { Formik, Form } from 'formik';
 import PropTypes from 'prop-types';
 import { useTranslation } from 'react-i18next';
+import * as Yup from 'yup';
 import { v4 as uuid } from 'uuid';
 import StringField from 'components/FormFields/StringField';
-import ToggleField from 'components/FormFields/ToggleField';
-import { SubscriberSchema } from 'constants/formSchemas';
 import { useCreateSubscriber } from 'hooks/Network/Subscribers';
-import useApiRequirements from 'hooks/useApiRequirements';
 import useMutationResult from 'hooks/useMutationResult';
 
 const propTypes = {
@@ -17,13 +14,16 @@ const propTypes = {
   onClose: PropTypes.func.isRequired,
   refresh: PropTypes.func.isRequired,
   formRef: PropTypes.instanceOf(Object).isRequired,
-  operatorId: PropTypes.string.isRequired,
+  registrationId: PropTypes.string.isRequired,
 };
 
-const CreateSubscriberForm = ({ isOpen, onClose, refresh, formRef, operatorId }) => {
+const CreateSubscriberForm = ({ isOpen, onClose, refresh, formRef, registrationId }) => {
   const { t } = useTranslation();
+  const toast = useToast();
   const [formKey, setFormKey] = useState(uuid());
-  const { passwordPolicyLink, passwordPattern } = useApiRequirements();
+  const validationSchema = Yup.object().shape({
+    email: Yup.string().email(t('form.invalid_email')).required(t('form.required')),
+  });
   const { onSuccess, onError } = useMutationResult({
     objName: t('subscribers.one'),
     operationType: 'create',
@@ -40,15 +40,30 @@ const CreateSubscriberForm = ({ isOpen, onClose, refresh, formRef, operatorId })
     <Formik
       innerRef={formRef}
       key={formKey}
-      initialValues={{ ...SubscriberSchema(t, { needPassword: true }).cast(), emailValidation: true }}
-      validationSchema={SubscriberSchema(t, { passRegex: passwordPattern })}
-      onSubmit={(data, { setSubmitting, resetForm }) =>
-        create.mutateAsync(
+      initialValues={{ email: '' }}
+      validationSchema={validationSchema}
+      onSubmit={({ email }, { setSubmitting, resetForm }) => {
+        if (!registrationId) {
+          toast({
+            id: `subscriber-create-registration-id-missing`,
+            title: t('common.error'),
+            description: t('crud.error_create_obj', {
+              obj: t('subscribers.one'),
+              e: 'Operator registrationId is missing',
+            }),
+            status: 'error',
+            duration: 5000,
+            isClosable: true,
+            position: 'top-right',
+          });
+          setSubmitting(false);
+          return;
+        }
+
+        return create.mutateAsync(
           {
-            ...data,
-            userRole: 'subscriber',
-            owner: operatorId,
-            notes: data.note.length > 0 ? [{ note: data.note }] : undefined,
+            email,
+            registrationId,
           },
           {
             onSuccess: () => {
@@ -56,29 +71,16 @@ const CreateSubscriberForm = ({ isOpen, onClose, refresh, formRef, operatorId })
               refresh();
             },
             onError: (e) => {
-              onError(e, { resetForm });
+              onError(e, { setSubmitting });
             },
           },
-        )
-      }
+        );
+      }}
     >
       <Form>
         <SimpleGrid minChildWidth="300px" spacing="20px" mb={8}>
           <StringField name="email" label={t('common.email')} isRequired />
-          <StringField name="name" label={t('common.name')} isRequired />
-          <ToggleField name="emailValidation" label={t('users.email_validation')} />
-          <StringField name="currentPassword" label={t('user.password')} isRequired hideButton />
-          <StringField name="description" label={t('common.description')} />
-          <StringField name="note" label={t('common.note')} />
         </SimpleGrid>
-        <Flex justifyContent="center" alignItems="center" maxW="100%" mt={4} mb={6}>
-          <Box w="100%">
-            <Link href={passwordPolicyLink} isExternal>
-              {t('login.password_policy')}
-              <ExternalLinkIcon mx="2px" />
-            </Link>
-          </Box>
-        </Flex>
       </Form>
     </Formik>
   );

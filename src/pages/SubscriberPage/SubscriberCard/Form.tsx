@@ -2,10 +2,11 @@ import React, { useEffect, useState } from 'react';
 import { Tabs, TabList, TabPanels, TabPanel, Tab, SimpleGrid } from '@chakra-ui/react';
 import { Formik, Form, FormikProps } from 'formik';
 import { useTranslation } from 'react-i18next';
+import * as Yup from 'yup';
 import { v4 as uuid } from 'uuid';
 import NotesTable from 'components/CustomFields/NotesTable';
 import StringField from 'components/FormFields/StringField';
-import { SubscriberSchema } from 'constants/formSchemas';
+import { testRegex } from 'constants/formTests';
 import { useUpdateSubscriber } from 'hooks/Network/Subscribers';
 import useApiRequirements from 'hooks/useApiRequirements';
 import useMutationResult from 'hooks/useMutationResult';
@@ -36,6 +37,11 @@ const EditSubscriberForm = (
     queryToInvalidate: ['get-subscriber', subscriber?.id],
   });
   const { passwordPattern } = useApiRequirements();
+  const validationSchema = Yup.object().shape({
+    email: Yup.string().email(t('form.invalid_email')).required(t('form.required')),
+    currentPassword: Yup.string().test('test-password', t('form.invalid_password'), (v) => testRegex(v, passwordPattern)),
+    description: Yup.string(),
+  });
 
   useEffect(() => {
     setFormKey(uuid());
@@ -47,13 +53,16 @@ const EditSubscriberForm = (
       enableReinitialize
       key={formKey}
       initialValues={{ ...subscriber }}
-      validationSchema={SubscriberSchema(t, { needPassword: false, passRegex: passwordPattern })}
-      onSubmit={({ name, description, currentPassword, notes, owner }, { setSubmitting, resetForm }) =>
+      validationSchema={validationSchema}
+      onSubmit={({ description, currentPassword, notes, owner }, { setSubmitting, resetForm }) =>
         updateSubscriber.mutateAsync(
           {
-            name,
-            currentPassword: currentPassword && currentPassword.length > 0 ? currentPassword : undefined,
-            description,
+            ...(subscriber?.waitingForEmailCheck
+              ? {}
+              : {
+                  currentPassword: currentPassword && currentPassword.length > 0 ? currentPassword : undefined,
+                  description,
+                }),
             notes: notes.filter((note) => note.isNew),
             owner,
           },
@@ -78,15 +87,18 @@ const EditSubscriberForm = (
             <Form>
               <SimpleGrid minChildWidth="300px" spacing="20px">
                 <StringField name="email" label={t('common.email')} isDisabled isRequired />
-                <StringField name="name" label={t('common.name')} isDisabled={!editing} isRequired />
-                <StringField
-                  name="currentPassword"
-                  label={t('user.password')}
-                  isDisabled={!editing}
-                  hideButton
-                  emptyIsUndefined
-                />
-                <StringField name="description" label={t('common.description')} isDisabled={!editing} />
+                {!subscriber?.waitingForEmailCheck ? (
+                  <StringField
+                    name="currentPassword"
+                    label={t('user.password')}
+                    isDisabled={!editing}
+                    hideButton
+                    emptyIsUndefined
+                  />
+                ) : null}
+                {!subscriber?.waitingForEmailCheck ? (
+                  <StringField name="description" label={t('common.description')} isDisabled={!editing} />
+                ) : null}
               </SimpleGrid>
             </Form>
           </TabPanel>

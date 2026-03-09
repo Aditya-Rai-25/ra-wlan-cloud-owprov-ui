@@ -42,7 +42,9 @@ const SubscriberActions: React.FC<Props> = ({ subscriber, refresh, isDisabled })
         <MenuItem onClick={handleSuspendClick}>
           {subscriber?.suspended ? t('users.stop_suspension') : t('users.suspend')}
         </MenuItem>
-        <MenuItem onClick={handleResetPasswordClick}>{t('users.reset_password')}</MenuItem>
+        {!subscriber?.waitingForEmailCheck ? (
+          <MenuItem onClick={handleResetPasswordClick}>{t('users.reset_password')}</MenuItem>
+        ) : null}
       </MenuList>
     </Menu>
   );

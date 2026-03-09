@@ -14,28 +14,38 @@ interface Props {
   formRef: React.Ref<FormikProps<Record<string, unknown>>> | undefined;
   finishStep: (v: Record<string, unknown>) => void;
   contactSuggestions: { serialNumber: string; contact: DeviceContact }[];
+  subscriberPrimaryEmail: string;
+  initialData?: Record<string, unknown>;
 }
 
 const CreateSubscriberDeviceStep3 = (
   {
     formRef,
     finishStep,
-    contactSuggestions
+    contactSuggestions,
+    subscriberPrimaryEmail,
+    initialData
   }: Props
 ) => {
   const { t } = useTranslation();
+  const initialContact = (initialData?.contact as Record<string, unknown>) ?? {};
 
   const onChange = (
     e: React.ChangeEvent<HTMLSelectElement>,
     setFieldValue: (field: string, value: unknown, shouldValidate?: boolean | undefined) => void,
   ) => {
     const found = contactSuggestions.find(({ serialNumber }) => serialNumber === e.target.value);
-    if (found) setFieldValue('contact', found.contact);
+    if (found)
+      setFieldValue('contact', {
+        ...found.contact,
+        primaryEmail: subscriberPrimaryEmail,
+      });
   };
 
   return (
     <Formik
       innerRef={formRef}
+      enableReinitialize
       initialValues={{
         contact: {
           visual: '',
@@ -45,18 +55,26 @@ const CreateSubscriberDeviceStep3 = (
           firstname: '',
           lastname: '',
           initials: '',
-          primaryEmail: '',
           secondaryEmail: '',
           mobiles: [],
           phones: [],
           description: '',
           accessPIN: '',
           note: '',
+          ...initialContact,
+          primaryEmail: subscriberPrimaryEmail,
         },
       }}
       validateOnMount
       validationSchema={Yup.object().shape({ contact: SubscriberDeviceContactSchema(t) })}
-      onSubmit={(data) => finishStep({ contact: data.contact })}
+      onSubmit={(data) =>
+        finishStep({
+          contact: {
+            ...data.contact,
+            primaryEmail: subscriberPrimaryEmail,
+          },
+        })
+      }
     >
       {({ setFieldValue }) => (
         <>
@@ -101,10 +119,10 @@ const CreateSubscriberDeviceStep3 = (
                 ]}
               />
               <StringField name="contact.title" label={t('contacts.title')} />
-              <StringField name="contact.firstname" label={t('contacts.first_name')} isRequired />
+              <StringField name="contact.firstname" label={t('contacts.first_name')} />
               <StringField name="contact.lastname" label={t('contacts.last_name')} />
               <StringField name="contact.initials" label={t('contacts.initials')} />
-              <StringField name="contact.primaryEmail" label={t('contacts.primary_email')} isRequired />
+              <StringField name="contact.primaryEmail" label={t('contacts.primary_email')} isDisabled />
               <StringField name="contact.secondaryEmail" label={t('contacts.secondary_email')} />
               <CreatableSelectField name="contact.phones" label={t('contacts.phones')} placeholder="+1(202)555-0103" />
               <CreatableSelectField

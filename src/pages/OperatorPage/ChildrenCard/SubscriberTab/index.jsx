@@ -10,9 +10,10 @@ import useRefreshId from 'hooks/useRefreshId';
 
 const propTypes = {
   operatorId: PropTypes.string.isRequired,
+  registrationId: PropTypes.string.isRequired,
 };
 
-const SubscriberTab = ({ operatorId }) => {
+const SubscriberTab = ({ operatorId, registrationId }) => {
   const { refreshId, refresh } = useRefreshId();
   const actions = useCallback((cell) => <Actions key={uuid()} cell={cell.row} refreshTable={refresh} />, [refreshId]);
 
@@ -21,7 +22,7 @@ const SubscriberTab = ({ operatorId }) => {
       <Flex>
         <Spacer />
         <SubscriberSearchModal operatorId={operatorId} />
-        <CreateSubscriberModal refresh={refresh} operatorId={operatorId} />
+        <CreateSubscriberModal refresh={refresh} registrationId={registrationId} />
       </Flex>
       <SubscriberTable operatorId={operatorId} actions={actions} refreshId={refreshId} />
     </>

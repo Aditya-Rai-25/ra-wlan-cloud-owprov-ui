@@ -12,25 +12,30 @@ import {
 import { useTranslation } from 'react-i18next';
 import WarningButton from 'components/Buttons/WarningButton';
 import { useSendSubscriberEmailValidation } from 'hooks/Network/Subscribers';
+import { Subscriber } from 'models/Subscriber';
 
 interface Props {
-  id: string;
+  subscriber?: Subscriber;
   isWaitingForEmailVerification?: boolean;
   isDisabled?: boolean;
   refresh: () => void;
+  registrationId?: string;
 }
 
 const defaultProps = {
+  subscriber: undefined,
   isWaitingForEmailVerification: false,
   isDisabled: false,
+  registrationId: undefined,
 };
 
 const WaitingForVerificationNotification = (
   {
-    id,
+    subscriber,
     isWaitingForEmailVerification,
     isDisabled,
-    refresh
+    refresh,
+    registrationId,
   }: Props
 ) => {
   const { t } = useTranslation();
@@ -39,9 +44,14 @@ const WaitingForVerificationNotification = (
     refresh();
     onClose();
   };
-  const { mutateAsync: sendValidation, isLoading } = useSendSubscriberEmailValidation({ id, refresh: onSuccess });
+  const { mutateAsync: sendValidation, isLoading } = useSendSubscriberEmailValidation({ refresh: onSuccess });
+  const canSendValidation = !!subscriber?.email && !!registrationId;
 
-  const handleValidationClick = () => sendValidation();
+  const handleValidationClick = () =>
+    sendValidation({
+      email: subscriber?.email ?? '',
+      registrationId: registrationId ?? '',
+    });
 
   if (!isWaitingForEmailVerification) return null;
 
@@ -62,7 +72,12 @@ const WaitingForVerificationNotification = (
               <Button onClick={onClose} mr={4}>
                 {t('common.cancel')}
               </Button>
-              <Button onClick={handleValidationClick} isLoading={isLoading} colorScheme="red">
+              <Button
+                onClick={handleValidationClick}
+                isLoading={isLoading}
+                colorScheme="red"
+                isDisabled={!canSendValidation}
+              >
                 {t('common.confirm')}
               </Button>
             </AlertDialogFooter>
